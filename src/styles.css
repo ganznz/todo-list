@@ -6,6 +6,7 @@
   --accent-green: #AEDEAA;
   --priority-red: #FF7A7A;
   --priority-orange: #FDAF54;
+  --priority-green: #87dd7f;
 }
 
 * {
@@ -18,7 +19,6 @@
 
 body {
   padding: var(--main-padding);
-  height: 100%;
 }
 
 .folders-menu-icon {
@@ -40,6 +40,12 @@ nav ul li:last-child {
   margin-left: auto;
 }
 
+hr {
+  border: none;
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
 main {
   display: flex;
   flex-wrap: wrap;
@@ -55,10 +61,10 @@ main {
 }
 
 .tasks-label {
-  font-size: 1rem;
+  font-size: 0.8rem;
   background-color: var(--accent-light-grey);
   text-align: center;
-  width: 140px;
+  width: fit-content;
   padding: 5px 15px;
   border-radius: 100px;
   font-weight: 400;
@@ -79,6 +85,9 @@ main {
   height: 130px; /* placeholder hardcoded value */
   border-radius: 3px;
   border-left: 8px solid var(--accent-light-grey);
+  display: flex;
+  gap: 15px;
+  padding: 5px;
 }
 
 .inprogress-tasks-section > .tasks-container > .task {
@@ -87,4 +96,81 @@ main {
 
 .completed-tasks-section > .tasks-container > .task {
   border-left: 8px solid var(--accent-green);
+}
+
+.task > svg {
+  color: var(--grey);
+}
+
+.task .task-info-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.task .task-info-container > p {
+  font-size: 0.8rem;
+  color: var(--grey);
+}
+
+.task .priority-label {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0);
+  transition: all 0.2s, color 0.5s;
+}
+
+.task .priority-label.high {
+  background-color: var(--priority-red);
+}
+
+.task .priority-label.medium {
+  background-color: var(--priority-orange);
+}
+
+.task .priority-label.low {
+  background-color: var(--priority-green);
+}
+
+.task:hover .priority-label {
+  border-radius: 100px;
+  width: 80px;
+  color: rgb(255, 255, 255);
+  color: rgba(255, 255, 255, 1);
+}
+
+.task:hover .priority-label.high::before {
+  content: "High";
+}
+
+.task:hover .priority-label.medium::before {
+  content: "Medium";
+}
+
+.task:hover .priority-label.low::before {
+  content: "Low";
+}
+
+.inprogress-tasks-section .task > svg {
+  color: var(--accent-orange);
+}
+
+.completed-tasks-section .task > svg {
+  color: var(--accent-green);
+}
+
+.tasks-section > .add-tasks {
+  background-color: var(--accent-light-grey);
+  color: var(--grey);
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
 }
