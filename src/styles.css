@@ -1,0 +1,90 @@
+:root {
+  --main-padding: 60px;
+  --grey: #7C7C7C;
+  --accent-light-grey: #DFDFDF;
+  --accent-orange: #FFCD93;
+  --accent-green: #AEDEAA;
+  --priority-red: #FF7A7A;
+  --priority-orange: #FDAF54;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  list-style: none;
+  font-family: sans-serif;
+}
+
+body {
+  padding: var(--main-padding);
+  height: 100%;
+}
+
+.folders-menu-icon {
+  position: absolute;
+  top: 10px;
+  left: 10px; 
+}
+
+header h1 {
+  margin-bottom: 30px;
+}
+
+nav ul {
+  display: flex;
+  gap: 20px;
+}
+
+nav ul li:last-child {
+  margin-left: auto;
+}
+
+main {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 15px 0;
+  flex-grow: 1;
+}
+
+.tasks-section, .tasks-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.tasks-label {
+  font-size: 1rem;
+  background-color: var(--accent-light-grey);
+  text-align: center;
+  width: 140px;
+  padding: 5px 15px;
+  border-radius: 100px;
+  font-weight: 400;
+}
+
+.inprogress-tasks-section > .tasks-label {
+  background-color: var(--accent-orange);
+}
+
+.completed-tasks-section > .tasks-label {
+  background-color: var(--accent-green);
+}
+
+.tasks-container > .task {
+  background-color: white;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+  min-width: 300px;
+  height: 130px; /* placeholder hardcoded value */
+  border-radius: 3px;
+  border-left: 8px solid var(--accent-light-grey);
+}
+
+.inprogress-tasks-section > .tasks-container > .task {
+  border-left: 8px solid var(--accent-orange);
+}
+
+.completed-tasks-section > .tasks-container > .task {
+  border-left: 8px solid var(--accent-green);
+}

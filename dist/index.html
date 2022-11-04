@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do List</title>
+  <script src="https://kit.fontawesome.com/8d1c439b9a.js" crossorigin="anonymous"></script>
+  <script src="main.js" defer></script>
+</head>
+<body>
+  <i class="fa-solid fa-folder-open fa-xl folders-menu-icon"></i>
+  <header>
+    <h1><i class="fa-solid fa-laptop"></i> Study</h1>
+    <nav>
+      <ul>
+        <li class="selected">Tasks</li>
+        <li>Calendar</li>
+        <li>Sort</li>
+      </ul>
+      <hr>
+    </nav>
+  </header>
+  <main class="main-content-container">
+    <div class="upcoming-tasks-section tasks-section">
+      <h2 class="tasks-label">Upcoming</h2>
+      <div class="tasks-container">
+        <div class="task"></div>
+        <div class="task"></div>
+      </div>
+      <button type="button" class="add-tasks btn">
+        <i class="fa-solid fa-plus"></i>
+      </button>
+    </div>
+    <div class="inprogress-tasks-section tasks-section">
+      <h2 class="tasks-label">In Progress</h2>
+      <div class="tasks-container">
+        <div class="task"></div>
+      </div>
+      <button type="button" class="add-tasks btn">
+        <i class="fa-solid fa-plus"></i>
+      </button>
+    </div>
+    <div class="completed-tasks-section tasks-section">
+      <h2 class="tasks-label">Completed</h2>
+      <div class="tasks-container">
+        <div class="task"></div>
+        <div class="task"></div>
+      </div>
+      <button type="button" class="add-tasks btn">
+        <i class="fa-solid fa-plus"></i>
+      </button>
+    </div>
+  </main>
+  <footer>
+    <p>Made by Ganz <i class="fa-solid fa-crown"></i></p>
+  </footer>
+</body>
+</html>
