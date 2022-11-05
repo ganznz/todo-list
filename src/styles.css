@@ -7,6 +7,8 @@
   --priority-red: #FF7A7A;
   --priority-orange: #FDAF54;
   --priority-green: #87dd7f;
+  --task-settings-minor-info-section-margin: 15px;
+  --task-settings-main-info-section-margin: 50px;
 }
 
 * {
@@ -23,6 +25,10 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
+}
+
+.folder-menu, .task-settings {
+  overflow: scroll;
 }
 
 .folders-menu-icon {
@@ -64,8 +70,86 @@ body {
   filter: drop-shadow(-3px 0 5px rgba(0, 0, 0, 0.1));
 }
 
+.task-settings .task-minor-info-section > * {
+  margin-bottom: var(--task-settings-minor-info-section-margin);
+}
+
+.task-settings .sidebar-title {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 1.4rem;
+}
+
+.task-settings .sidebar-title input {
+  font-size: 1.4rem;
+  border: none;
+  padding: 5px;
+  border-radius: 6px;
+  transition: all 0.1s;
+}
+
+.task-settings .sidebar-title input:focus {
+  filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.2))
+}
+
+.task-settings .task-minor-container > div {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.task-settings .task-minor-container h4, .task-minor-container h5 {
+  font-weight: 400;
+  color: var(--grey);
+  font-size: 0.9rem;
+}
+
+.task-settings .task-minor-container h4 {
+  flex: 1;
+}
+
+.task-settings .task-minor-container h5 {
+  font-size: 0.8rem;
+  margin-right: 8px;
+}
+
+.task-settings .task-minor-container svg {
+  color: var(--priority-red);
+}
+
+.task-settings .task-minor-container > .task-status > h5,
+.task-settings .task-minor-container > .task-priority > h5 {
+  color: black;
+  border-radius: 100px;
+  width: fit-content;
+  padding: 5px 15px;
+}
+
+.task-settings .task-minor-container > .task-status > h5 {
+  background-color: var(--accent-light-grey);
+}
+
+.task-settings .task-minor-container > .task-priority > h5 {
+  background-color: var(--priority-red);
+}
+
+.task-settings .task-main-info-section > * {
+  margin-top: var(--task-settings-main-info-section-margin);
+}
+
+.task-settings .task-main-info-section h2 {
+  font-weight: 400;
+  margin-bottom: 10px;
+}
+
+.task-settings .task-main-info-section p, .task-main-info-section label {
+  color: var(--grey);
+}
+
 .sidebar-blur {
   z-index: 1;
+  backdrop-filter: blur(50px);
   position: absolute;
   top: 0;
   left: 0;
