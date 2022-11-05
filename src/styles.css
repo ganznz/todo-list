@@ -31,15 +31,18 @@ body {
   left: 10px; 
 }
 
-.folder-menu {
+.folder-menu, .task-settings {
   z-index: 2;
   height: 100vh;
   position: absolute;
+  padding: calc(var(--main-padding) / 2);
+  background-color: #FFFF;
+}
+
+.folder-menu {
   top: 0;
   left: 0;
-  padding: calc(var(--main-padding) / 2);
   min-width: 300px;
-  background-color: #FFFF;
   filter: drop-shadow(3px 0 5px rgba(0, 0, 0, 0.1));
 }
 
@@ -54,8 +57,11 @@ body {
   gap: 20px;
 }
 
-.folder-menu li {
-
+.task-settings {
+  top: 0;
+  right: 0;
+  width: 500px;
+  filter: drop-shadow(-3px 0 5px rgba(0, 0, 0, 0.1));
 }
 
 .sidebar-blur {
