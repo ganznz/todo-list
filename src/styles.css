@@ -81,15 +81,24 @@ body {
   font-size: 1.4rem;
 }
 
+.task-settings .sidebar-title svg {
+  color: var(--grey);
+}
+
 .task-settings .sidebar-title input {
   font-size: 1.4rem;
+}
+
+.task-settings .sidebar-title input,
+.task-settings .task-main-info-section textarea {
   border: none;
   padding: 5px;
   border-radius: 6px;
   transition: all 0.1s;
 }
 
-.task-settings .sidebar-title input:focus {
+.task-settings .sidebar-title input:focus,
+.task-settings .task-main-info-section textarea:focus {
   filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.2))
 }
 
@@ -116,6 +125,12 @@ body {
 
 .task-settings .task-minor-container svg {
   color: var(--priority-red);
+  transition: all 0.1s;
+}
+
+.task-settings .task-minor-container > div:hover svg {
+  transform: scale(1.3);
+  filter: brightness(1.2);
 }
 
 .task-settings .task-minor-container > .task-status > h5,
@@ -143,8 +158,42 @@ body {
   margin-bottom: 10px;
 }
 
-.task-settings .task-main-info-section p, .task-main-info-section label {
+.task-settings .task-main-info-section textarea, .task-main-info-section label {
   color: var(--grey);
+}
+
+.task-settings .task-main-info-section textarea {
+  border: none;
+  resize: vertical;
+  padding: 10px;
+}
+
+.task-settings .sidebar-title input {
+  border: none;
+  padding: 5px;
+  border-radius: 6px;
+  transition: all 0.1s;
+}
+
+.task-settings .task-main-info-section form {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.task-settings .task-main-info-section form button {
+  margin-top: var(--task-settings-main-info-section-margin);
+  padding: 10px;
+  border: none;
+  border-radius: 100px;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(to top right, rgb(164, 233, 144), rgb(121, 197, 100));
+  transition: all 0.2s;
+}
+
+.task-settings .task-main-info-section form button:hover {
+  filter: drop-shadow(0 5px 0 rgb(123, 180, 108));
 }
 
 .sidebar-blur {
