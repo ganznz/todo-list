@@ -124,7 +124,7 @@ body {
 }
 
 .task-settings .task-minor-container svg {
-  color: var(--priority-red);
+  color: var(--priority-orange);
   transition: all 0.1s;
 }
 
@@ -168,11 +168,25 @@ body {
   padding: 10px;
 }
 
+.task-settings .sidebar-title {
+  margin-bottom: 50px;
+}
+
 .task-settings .sidebar-title input {
   border: none;
   padding: 5px;
   border-radius: 6px;
   transition: all 0.1s;
+}
+
+.task-settings .sidebar-title > svg:last-child {
+  color: var(--priority-red);
+  margin-left: auto;
+}
+
+.task-settings .task-description textarea {
+  font-size: 0.9rem;
+  width: 100%;
 }
 
 .task-settings .task-main-info-section form {
@@ -181,7 +195,7 @@ body {
   gap: 5px;
 }
 
-.task-settings .task-main-info-section form button {
+.task-settings .task-main-info-section form button[type="submit"] {
   margin-top: var(--task-settings-main-info-section-margin);
   padding: 10px;
   border: none;
@@ -192,8 +206,13 @@ body {
   transition: all 0.2s;
 }
 
-.task-settings .task-main-info-section form button:hover {
+.task-settings .task-main-info-section form button[type="submit"]:hover {
   filter: drop-shadow(0 5px 0 rgb(123, 180, 108));
+}
+
+.task-settings .form-checkbox-container svg {
+  color: var(--priority-red);
+  margin-left: 20px;
 }
 
 .sidebar-blur {
@@ -235,6 +254,7 @@ main {
   gap: 20px;
   padding: 15px 0;
   flex-grow: 1;
+  overflow: auto;
 }
 
 .tasks-section, .tasks-container {
@@ -293,12 +313,14 @@ main {
   color: var(--accent-green);
 }
 
-.task .fa-trash-can {
+.task .fa-trash-can,
+.task-settings .sidebar-title > svg:last-child {
   transition: all 0.2s;
   margin-left: auto;
 }
 
-.task .fa-trash-can:hover {
+.task .fa-trash-can:hover,
+.task-settings .sidebar-title > svg:last-child:hover {
   color: var(--priority-red);
   transform: rotate(-10deg);
 }
@@ -365,7 +387,8 @@ main {
   content: "Low";
 }
 
-.tasks-section > .add-tasks {
+.tasks-section > .add-tasks,
+.task-main-info-section form .add-todos {
   background-color: var(--accent-light-grey);
   color: var(--grey);
   border: none;
