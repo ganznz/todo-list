@@ -9,8 +9,8 @@ export default class Task {
   
   constructor(name, status, priority) {
     this.#name = name;
-    this.#status = status;
-    this.#priority = priority;
+    this.#status = status.toLowerCase();
+    this.#priority = priority.toLowerCase();
     this.#dateCreated; // placeholder
     this.#dateDue; // set for same day task was created
   }

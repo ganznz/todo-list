@@ -1,5 +1,5 @@
 export default class Folder {
-  #name = "Folder #num";
+  #name = 'Folder #num';
   #tasks;
   #numOfTasks = 0;
 
