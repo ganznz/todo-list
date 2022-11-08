@@ -13,4 +13,7 @@ iterateEventOverNodeList(addTaskButtons, 'click', e => {
 });
 
 const sidebarBlur = document.querySelector('.sidebar-blur');
-sidebarBlur.addEventListener('click', () => renderDOM.toggleTaskSettingsView())
+sidebarBlur.addEventListener('click', () => {
+  document.querySelector('.task-settings').classList.remove('visible');
+  sidebarBlur.classList.remove('visible');
+})

@@ -4,7 +4,7 @@ export default class Task {
   #priority;
   #dateCreated;
   #dateDue;
-  #description = "";
+  #description = "Add some information to this task...";
   #todos = [];
   
   constructor(name, status, priority) {
@@ -20,9 +20,10 @@ export default class Task {
   get priority() { return this.#priority };
   get dateCreated() { return this.#dateCreated };
   get dueDate() { return this.#dateDue };
+  get description() { return this.#description };
   
   set name(value) {
-
+    
   };
 
   set status(value) {
