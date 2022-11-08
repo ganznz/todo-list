@@ -3,11 +3,16 @@ import Task from './task';
 
 export default class Folder {
   #name = 'Folder #num';
-  #tasks;
+  #tasks = [];
   #numOfTasks = 0;
 
   constructor() {
-    this.#tasks = []; // initially empty folder
+    if (!(this.#numOfTasks)) { // create default tasks
+      this.createTask('upcoming');
+      this.createTask('inprogress');
+      this.createTask('inprogress');
+      this.createTask('completed');
+    }
   }
 
   get name() { return this.#name };
@@ -20,10 +25,14 @@ export default class Folder {
 
   createTask = (e) => {
     this.#numOfTasks++;
-    const task = new Task(`Task ${this.numOfTasks}`, this.determineTaskStatus(e), 'low');
+
+    const task = (e == 'upcoming' || e == 'inprogress' || e == 'completed')
+    ? new Task(`Task ${this.numOfTasks}`, e, 'low')
+    : new Task(`Task ${this.numOfTasks}`, this.determineTaskStatus(e), 'low');
+    
     this.#tasks.push(task);
     const taskElements = renderDOM.createTaskElements(task);
-    taskElements.addEventListener('click', () => renderDOM.toggleTaskSettingsView(task));
+    taskElements.addEventListener('click', () => renderDOM.showTaskSettingsView(task));
     renderDOM.appendTaskElementsToDOM(task, taskElements);
   }
 
