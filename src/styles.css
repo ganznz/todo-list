@@ -67,9 +67,16 @@ body {
 
 .task-settings {
   top: 0;
-  right: 0;
+  right: -100%;
   width: 500px;
   filter: drop-shadow(-3px 0 5px rgba(0, 0, 0, 0.1));
+  visibility: none;
+  transition: all 1s cubic-bezier(1,.02,0,1);
+}
+
+.task-settings.visible {
+  visibility: visible;
+  right: 0px;
 }
 
 .task-settings .task-minor-info-section > * {
@@ -226,6 +233,12 @@ body {
   width: 100vw;
   height: 100vh;
   background-color: #87dd7f;
+  opacity: 0;
+  display: none;
+}
+
+.sidebar-blur.visible {
+  display: block;
   opacity: 0.5;
 }
 
@@ -400,6 +413,12 @@ main {
   border-radius: 50%;
   width: 30px;
   height: 30px;
+}
+
+.tasks-section > .add-tasks > *,
+.task-main-info-section form .add-todos > *,
+.folder-menu .add-folders > * {
+  pointer-events: none;
 }
 
 footer {
