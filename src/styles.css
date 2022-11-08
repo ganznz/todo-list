@@ -154,16 +154,18 @@ body {
   background-color: var(--accent-light-grey);
 }
 
-.task-settings .task-minor-container > .task-status > h5.inprogress {
+.task-settings .task-priority > h5.high {
+  background-color: var(--priority-red);
+}
+
+.task-settings .task-minor-container > .task-status > h5.inprogress,
+.task-settings .task-priority > h5.medium {
   background-color: var(--accent-orange);
 }
 
-.task-settings .task-minor-container > .task-status > h5.completed {
+.task-settings .task-minor-container > .task-status > h5.completed,
+.task-settings .task-priority > h5.low {
   background-color: var(--accent-green);
-}
-
-.task-settings .task-minor-container > .task-priority > h5 {
-  background-color: var(--priority-red);
 }
 
 .task-settings .task-main-info-section > * {
