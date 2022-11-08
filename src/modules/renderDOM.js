@@ -41,7 +41,7 @@ export default class renderDOM {
 
     if (task.status == 'upcoming') {
       upcomingTasksContainer.appendChild(taskElements);
-    } else if (task.status == 'in progress') {
+    } else if (task.status == 'inprogress') {
       inprogressTasksContainer.appendChild(taskElements);
     } else {
       completedTasksContainer.appendChild(taskElements);
@@ -50,5 +50,18 @@ export default class renderDOM {
 
   static clearFolderTasksElements = () => {
     document.querySelectorAll('.tasks-container').forEach(container => container.innerHTML = "");
+  }
+
+  static toggleTaskSettingsView = (task = null) => {
+    const sidebarBlur = document.querySelector('.sidebar-blur');
+    sidebarBlur.classList.toggle('visible');
+    const taskSettingsDOM = document.querySelector('.task-settings');
+    taskSettingsDOM.classList.toggle('visible');
+    const titleInput = taskSettingsDOM.querySelector('.task-minor-info-section > .sidebar-title > input');
+    titleInput.setAttribute('value', task.name)
+    const taskStatusLabel = taskSettingsDOM.querySelector('.task-minor-container > .task-status > h5');
+    taskStatusLabel.className = '';
+    taskStatusLabel.classList.add(task.status);
+    taskStatusLabel.textContent = task.status == 'upcoming' ? 'Upcoming' : (task.status == "inprogress" ? 'In Progress' : 'Completed');
   }
 }

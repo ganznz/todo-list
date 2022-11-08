@@ -23,6 +23,7 @@ export default class Folder {
     const task = new Task(`Task ${this.numOfTasks}`, this.determineTaskStatus(e), 'low');
     this.#tasks.push(task);
     const taskElements = renderDOM.createTaskElements(task);
+    taskElements.addEventListener('click', () => renderDOM.toggleTaskSettingsView(task));
     renderDOM.appendTaskElementsToDOM(task, taskElements);
   }
 
@@ -30,7 +31,7 @@ export default class Folder {
     if (e.target.classList.contains('upcoming-tasks')) {
       return 'upcoming';
     } else if (e.target.classList.contains('inprogress-tasks')) {
-      return 'in progress';
+      return 'inprogress';
     } else {
       return 'completed';
     }
