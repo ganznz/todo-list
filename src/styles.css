@@ -71,7 +71,7 @@ body {
   width: 500px;
   filter: drop-shadow(-3px 0 5px rgba(0, 0, 0, 0.1));
   visibility: none;
-  transition: all 1s cubic-bezier(1,.02,0,1);
+  transition: all 0.49s cubic-bezier(0.98, 0.1, 0, 0.98);
 }
 
 .task-settings.visible {
@@ -154,6 +154,14 @@ body {
   background-color: var(--accent-light-grey);
 }
 
+.task-settings .task-minor-container > .task-status > h5.inprogress {
+  background-color: var(--accent-orange);
+}
+
+.task-settings .task-minor-container > .task-status > h5.completed {
+  background-color: var(--accent-green);
+}
+
 .task-settings .task-minor-container > .task-priority > h5 {
   background-color: var(--priority-red);
 }
@@ -234,11 +242,12 @@ body {
   height: 100vh;
   background-color: #87dd7f;
   opacity: 0;
-  display: none;
+  visibility: hidden;
+  transition: all 1s;
 }
 
 .sidebar-blur.visible {
-  display: block;
+  visibility: visible;
   opacity: 0.5;
 }
 
