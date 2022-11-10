@@ -12,8 +12,12 @@ iterateEventOverNodeList(addTaskButtons, 'click', e => {
   myFolder.createTask(e);
 });
 
+// close sidemenus
 const sidebarBlur = document.querySelector('.sidebar-blur');
-sidebarBlur.addEventListener('click', () => {
-  document.querySelector('.task-settings').classList.remove('visible');
-  sidebarBlur.classList.remove('visible');
-})
+const taskSettingsDOM = document.querySelector('.task-settings');
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('task-settings-exit-btn') || (e.target.classList.contains('sidebar-blur'))) {
+    [taskSettingsDOM, sidebarBlur].forEach(element => element.classList.remove('visible'));
+    setTimeout(() => { [taskSettingsDOM, sidebarBlur].forEach(element => element.setAttribute('style', 'display: none')) }, 1000);
+  }
+});
