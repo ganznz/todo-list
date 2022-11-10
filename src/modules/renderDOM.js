@@ -10,7 +10,9 @@ export default class renderDOM {
 
   }
 
-  static createTaskElements = (task) => {
+  static createTaskElements = (task, index) => {
+    const taskPerspectiveContainer = document.createElement('div');
+    taskPerspectiveContainer.classList.add('task-perspective-container');
     const taskContainer = document.createElement('div');
     taskContainer.classList.add('task');
     const taskIcon = document.createElement('i');
@@ -31,7 +33,9 @@ export default class renderDOM {
     taskContainer.appendChild(taskIcon);
     taskContainer.appendChild(taskInfoContainer);
     taskContainer.appendChild(deleteIcon);
-    return taskContainer;
+    taskPerspectiveContainer.appendChild(taskContainer);
+    taskPerspectiveContainer.setAttribute('id', index);
+    return taskPerspectiveContainer;
   }
 
   static appendTaskElementsToDOM = (task, taskElements) => {
@@ -54,9 +58,15 @@ export default class renderDOM {
 
   static showTaskSettingsView = (task) => {
     const sidebarBlur = document.querySelector('.sidebar-blur');
-    sidebarBlur.classList.add('visible');
     const taskSettingsDOM = document.querySelector('.task-settings');
-    taskSettingsDOM.classList.add('visible');
+    [sidebarBlur, taskSettingsDOM].forEach(element => element.setAttribute('style', 'display: block'));
+    taskSettingsDOM.setAttribute('taskindex', task.index);
+
+    setTimeout(() => {
+      sidebarBlur.classList.add('visible');
+      taskSettingsDOM.classList.add('visible');
+    }, 100);
+
     const titleInput = taskSettingsDOM.querySelector('.task-minor-info-section > .sidebar-title > input');
     titleInput.setAttribute('value', task.name);
     titleInput.value = task.name;
@@ -70,5 +80,14 @@ export default class renderDOM {
     taskPriorityLabel.textContent = task.priority == 'low' ? 'Low' : (task.priority == "medium" ? 'Medium' : 'High');
     const taskDescription = taskSettingsDOM.querySelector('.task-main-info-section > .task-description > textarea');
     taskDescription.setAttribute('value', task.description);
+  }
+
+  static closeTaskSettingsView = (e) => {
+    const sidebarBlur = document.querySelector('.sidebar-blur');
+    const taskSettingsDOM = document.querySelector('.task-settings');
+    if (e.target.classList.contains('task-settings-exit-btn') || (e.target.classList.contains('sidebar-blur'))) {
+      [taskSettingsDOM, sidebarBlur].forEach(element => element.classList.remove('visible'));
+      setTimeout(() => { [taskSettingsDOM, sidebarBlur].forEach(element => element.setAttribute('style', 'display: none')) }, 1000);
+    }
   }
 }
