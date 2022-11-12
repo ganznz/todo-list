@@ -4,7 +4,7 @@ import Task from './task';
 export let allFolders = []; // instances of the Folder class get pushed into this
 
 export default class Folder {
-  #name = 'Folder #num';
+  #name = `Folder ${allFolders.length + 1}`;
   #tasks = [];
   #numOfTasks = 0;
 
@@ -50,7 +50,6 @@ export default class Folder {
 
   updateTask = index => {
     let taskObj = this.tasks[index];
-    // let taskElementsDOM = document.getElementById(index);
     taskObj.name = document.querySelector('.sidebar-title > input').value;
     taskObj.status = document.querySelector('.task-minor-container > .task-status > h5').className;
     taskObj.priority = document.querySelector('.task-minor-container > .task-priority > h5').className;

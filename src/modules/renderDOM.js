@@ -1,13 +1,34 @@
+import { differenceInBusinessDays } from "date-fns";
+import Folder, { allFolders } from "./tasksFolder";
+
+// -- VARIABLES -- //
+const sidebarBlur = document.querySelector('.sidebar-blur');
+const taskSettingsDOM = document.querySelector('.task-settings');
+const folderMenu = document.querySelector('.folder-menu');
+const addFoldersBtn = document.querySelector('.add-folders');
+
 export default class renderDOM {
+
+  static addFolderToSidebar = (folder) => {
+    const ul = folderMenu.querySelector('ul');
+    const li = document.createElement('li');
+    li.setAttribute('folderindex', allFolders.length - 1)
+    li.textContent = folder.name;
+    if (allFolders.length > 1) {
+      const previouslySelected = folderMenu.querySelector('.selected-folder');
+      previouslySelected.classList.remove('selected-folder');
+    }
+    li.classList.add('selected-folder');
+    ul.appendChild(li)
+  }
 
   static renderFolder = (folder) => {
     const upcomingTasksContainer = document.querySelector('.tasks-container.upcoming-tasks');
     const inprogressTasksContainer = document.querySelector('.tasks-container.inprogress-tasks');
     const completedTasksContainer = document.querySelector('.tasks-container.completed-tasks');
-    
+
     // removes old task DOM elements
     this.clearFolderTasksElements();
-
   }
 
   static createTaskElements = (task, index) => {
@@ -57,8 +78,6 @@ export default class renderDOM {
   }
 
   static showTaskSettingsView = (task) => {
-    const sidebarBlur = document.querySelector('.sidebar-blur');
-    const taskSettingsDOM = document.querySelector('.task-settings');
     [sidebarBlur, taskSettingsDOM].forEach(element => element.setAttribute('style', 'display: block'));
     taskSettingsDOM.setAttribute('taskindex', task.index);
 
@@ -80,14 +99,51 @@ export default class renderDOM {
     taskPriorityLabel.textContent = task.priority == 'low' ? 'Low' : (task.priority == "medium" ? 'Medium' : 'High');
     const taskDescription = taskSettingsDOM.querySelector('.task-main-info-section > .task-description > textarea');
     taskDescription.setAttribute('value', task.description);
+    taskDescription.value = task.description;
   }
 
-  static closeTaskSettingsView = (e) => {
-    const sidebarBlur = document.querySelector('.sidebar-blur');
-    const taskSettingsDOM = document.querySelector('.task-settings');
-    if (e.target.classList.contains('task-settings-exit-btn') || (e.target.classList.contains('sidebar-blur'))) {
+  static closeTaskSettingsView = e => {
       [taskSettingsDOM, sidebarBlur].forEach(element => element.classList.remove('visible'));
       setTimeout(() => { [taskSettingsDOM, sidebarBlur].forEach(element => element.setAttribute('style', 'display: none')) }, 1000);
-    }
+  }
+
+  static closeFoldersSettingsView = e => {
+      [folderMenu, sidebarBlur].forEach(element => element.classList.remove('visible'));
+      setTimeout(() => { [folderMenu, sidebarBlur].forEach(element => element.setAttribute('style', 'display: none')) }, 1000);
   }
 }
+
+// close task settings sidebar
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('task-settings-exit-btn') || (e.target.classList.contains('sidebar-blur'))) {
+    renderDOM.closeTaskSettingsView(e);
+    // selectedFolder = 
+    // Folder.updateTask(taskSettingsDOM.getAttribute('taskindex'))
+  }
+});
+
+// open folders sidebar
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('folders-menu-icon')) {
+    [sidebarBlur, folderMenu].forEach(element => element.setAttribute('style', 'display: block'));
+    setTimeout(() => {
+      sidebarBlur.classList.add('visible');
+      folderMenu.classList.add('visible');
+    }, 100);
+  }
+})
+
+// close folders sidebar
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('folders-menu-exit-btn') || (e.target.classList.contains('sidebar-blur'))) {
+    renderDOM.closeFoldersSettingsView(e);
+  }
+});
+
+// add folders to sidebar
+addFoldersBtn.addEventListener('click', e => {
+  renderDOM.clearFolderTasksElements(); // clears old folder viewport before showing new one
+  const folderObj = new Folder();
+  allFolders.push(folderObj);
+  renderDOM.addFolderToSidebar(folderObj);
+});
