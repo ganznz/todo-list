@@ -5,7 +5,7 @@ export default class Task {
   #index
   #dateCreated;
   #dateDue;
-  #description = "Add some information to this task...";
+  #description = "Add a description for this task!";
   #todos = [];
   
   constructor(name, status, priority, index) {
@@ -22,28 +22,14 @@ export default class Task {
   get priority() { return this.#priority };
   get index() { return this.#index };
   get dateCreated() { return this.#dateCreated };
-  get dueDate() { return this.#dateDue };
+  get dateDue() { return this.#dateDue };
   get description() { return this.#description };
   
-  set name(value) {
-
-  };
-
-  set status(value) {
-
-  }
-
-  set priority(value) {
-
-  }
-
-  set dueDate(value) {
-
-  };
-
-  set description(value) {
-
-  };
+  set name(value) { this.name = value };
+  set status(value) { this.status = value };
+  set priority(value) { this.priority = value };
+  set dateDue(value) { this.dateDue = value };
+  set description(value) { this.description = value };
 
   createTodo = () => {
 
