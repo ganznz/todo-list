@@ -49,19 +49,13 @@ export default class Folder {
   };
 
   updateTask = index => {
-    let taskObj = this.tasks[index];
+    const taskElementsDOM = document.getElementById(`${index}`);
+    const taskObj = this.tasks[index];
     taskObj.name = document.querySelector('.sidebar-title > input').value;
-    taskObj.status = document.querySelector('.task-minor-container > .task-status > h5').className;
-    taskObj.priority = document.querySelector('.task-minor-container > .task-priority > h5').className;
+    taskElementsDOM.querySelector('h3').textContent = taskObj.name;
   };
 
-  // updateTaskIndexes = () => {
-  //   let index = 0
-  //   document.querySelectorAll('.task-perspective-container').forEach(element => element.setAttribute('id', index));
-  //   index++
-  // };
-
-  deleteTask = () => {
+  deleteTask = index => {
     this.#numOfTasks--;
   };
 }

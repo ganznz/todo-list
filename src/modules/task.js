@@ -25,11 +25,11 @@ export default class Task {
   get dateDue() { return this.#dateDue };
   get description() { return this.#description };
   
-  set name(value) { this.name = value };
-  set status(value) { this.status = value };
-  set priority(value) { this.priority = value };
-  set dateDue(value) { this.dateDue = value };
-  set description(value) { this.description = value };
+  set name(value) { this.#name = value };
+  set status(value) { this.#status = value };
+  set priority(value) { this.#priority = value };
+  set dateDue(value) { this.#dateDue = value };
+  set description(value) { this.#description = value };
 
   createTodo = () => {
 

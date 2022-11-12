@@ -117,8 +117,11 @@ export default class renderDOM {
 document.addEventListener('click', e => {
   if (e.target.classList.contains('task-settings-exit-btn') || (e.target.classList.contains('sidebar-blur'))) {
     renderDOM.closeTaskSettingsView(e);
-    // selectedFolder = 
-    // Folder.updateTask(taskSettingsDOM.getAttribute('taskindex'))
+    const selectedFolder = folderMenu.querySelector('.selected-folder');
+    const selectedFolderIndex = selectedFolder.getAttribute('folderindex');
+    const taskIndex = taskSettingsDOM.getAttribute('taskindex');
+
+    allFolders[selectedFolderIndex].updateTask(taskIndex); // update task
   }
 });
 
