@@ -27,8 +27,8 @@ body {
   height: 100vh;
 }
 
-.folder-menu, .task-settings {
-  overflow: scroll;
+svg > *{
+  pointer-events: none;
 }
 
 .folders-menu-icon {
@@ -41,22 +41,57 @@ body {
   z-index: 2;
   height: 100vh;
   position: absolute;
-  padding: calc(var(--main-padding) / 2);
   background-color: #FFFF;
+  overflow: scroll;
+  display: none;
+  transition: all 0.49s cubic-bezier(0.98, 0.1, 0, 0.98);
 }
 
 .folder-menu {
+  padding-top: calc(var(--main-padding) / 2);
   top: 0;
-  left: 0;
+  left: -100%;
   min-width: 300px;
   filter: drop-shadow(3px 0 5px rgba(0, 0, 0, 0.1));
-  display: flex;
   flex-direction: column;
   gap: calc(var(--main-padding) / 2);
 }
 
+.folder-menu > *:not(:last-child) {
+  margin-bottom: 30px;
+}
+
+.folder-menu > *:not(.folders-list) {
+  display: flex;
+  margin: 5px calc(var(--main-padding) / 2);
+}
+
+.folder-menu .folders-list {
+  gap: 10px;
+}
+
+.folder-menu .folders-list li {
+  padding: 5px calc(var(--main-padding) / 2);
+}
+
+.folder-menu .folder-menu-header svg {
+  margin-left: auto;
+}
+
+.folder-menu .add-folders {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.folder-menu.visible {
+  left: 0;
+  display: flex;
+}
+
 .folder-menu h1 {
   text-align: center;
+  display: inline;
 }
 
 .folder-menu ul {
@@ -65,13 +100,17 @@ body {
   gap: 20px;
 }
 
+.folder-menu ul li.selected {
+  background-color: var(--accent-light-grey);
+}
+
 .task-settings {
+  padding: calc(var(--main-padding) / 2);
   top: 0;
   right: -100%;
+  transform: translateX(-0);
   width: 500px;
   filter: drop-shadow(-3px 0 5px rgba(0, 0, 0, 0.1));
-  display: none;
-  transition: all 0.49s cubic-bezier(0.98, 0.1, 0, 0.98);
 }
 
 .task-settings.visible {
@@ -89,7 +128,9 @@ body {
   font-size: 1.4rem;
 }
 
-.task-settings .sidebar-title svg {
+.task-settings .sidebar-title svg,
+.folder-menu svg {
+  font-size: 1.4rem;
   color: var(--grey);
 }
 
@@ -98,7 +139,7 @@ body {
 }
 
 .task-settings .sidebar-title input,
-.task-settings .task-main-info-section textarea {
+.task-settings .task-description textarea {
   border: none;
   padding: 5px;
   border-radius: 6px;
@@ -176,7 +217,8 @@ body {
   margin-bottom: 10px;
 }
 
-.task-settings .task-main-info-section textarea, .task-main-info-section label {
+.task-settings .task-main-info-section textarea,
+.task-main-info-section label {
   color: var(--grey);
 }
 
@@ -205,6 +247,7 @@ body {
 .task-settings .task-description textarea {
   font-size: 0.9rem;
   width: 100%;
+  height: fit-content;
 }
 
 .task-settings .task-main-info-section form {
