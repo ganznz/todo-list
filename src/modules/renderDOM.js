@@ -1,11 +1,16 @@
 import { differenceInBusinessDays } from "date-fns";
 import Folder, { allFolders } from "./tasksFolder";
 
-// -- VARIABLES -- //
+// -- ELEMENTS -- //
 const sidebarBlur = document.querySelector('.sidebar-blur');
 const taskSettingsDOM = document.querySelector('.task-settings');
 const folderMenu = document.querySelector('.folder-menu');
 const addFoldersBtn = document.querySelector('.add-folders');
+
+const titleInput = taskSettingsDOM.querySelector('.task-minor-info-section > .sidebar-title > input');
+const taskStatusLabel = taskSettingsDOM.querySelector('.task-minor-container > .task-status > h5');
+const taskPriorityLabel = taskSettingsDOM.querySelector('.task-minor-container > .task-priority > h5');
+const taskDescription = taskSettingsDOM.querySelector('.task-main-info-section > .task-description > textarea');
 
 export default class renderDOM {
 
@@ -86,18 +91,14 @@ export default class renderDOM {
       taskSettingsDOM.classList.add('visible');
     }, 100);
 
-    const titleInput = taskSettingsDOM.querySelector('.task-minor-info-section > .sidebar-title > input');
     titleInput.setAttribute('value', task.name);
     titleInput.value = task.name;
-    const taskStatusLabel = taskSettingsDOM.querySelector('.task-minor-container > .task-status > h5');
     taskStatusLabel.className = '';
     taskStatusLabel.classList.add(task.status);
     taskStatusLabel.textContent = task.status == 'upcoming' ? 'Upcoming' : (task.status == "inprogress" ? 'In Progress' : 'Completed');
-    const taskPriorityLabel = taskSettingsDOM.querySelector('.task-minor-container > .task-priority > h5');
     taskPriorityLabel.className = '';
     taskPriorityLabel.classList.add(task.priority);
     taskPriorityLabel.textContent = task.priority == 'low' ? 'Low' : (task.priority == "medium" ? 'Medium' : 'High');
-    const taskDescription = taskSettingsDOM.querySelector('.task-main-info-section > .task-description > textarea');
     taskDescription.setAttribute('value', task.description);
     taskDescription.value = task.description;
   }
@@ -111,7 +112,32 @@ export default class renderDOM {
       [folderMenu, sidebarBlur].forEach(element => element.classList.remove('visible'));
       setTimeout(() => { [folderMenu, sidebarBlur].forEach(element => element.setAttribute('style', 'display: none')) }, 1000);
   }
+
+  static toggleSettingsViewTaskStatus = (statuses) => {
+    const label = taskSettingsStatus.querySelector('h5');
+    const previousIndex = statuses.indexOf(label.className);
+    label.className = '';
+    label.classList.add(`${statuses[(previousIndex + 1) % statuses.length]}`);
+    taskStatusLabel.textContent = label.className == 'upcoming' ? 'Upcoming' : (label.className == "inprogress" ? 'In Progress' : 'Completed');
+  }
+
+  static toggleSettingsViewTaskPriorities = (priorities) => {
+    const label = taskSettingsPriority.querySelector('h5');
+    const previousIndex = priorities.indexOf(label.className);
+    label.className = '';
+    label.classList.add(`${priorities[(previousIndex + 1) % priorities.length]}`);
+    taskPriorityLabel.textContent = label.className == 'low' ? 'Low' : (label.className == "medium" ? 'Medium' : 'High');
+  }
 }
+
+// change task settings status and priority
+const taskSettingsStatus = taskSettingsDOM.querySelector('.task-status');
+const taskSettingsPriority = taskSettingsDOM.querySelector('.task-priority');
+const taskStatuses = ['upcoming', 'inprogress', 'completed'];
+const taskPriorities = ['low', 'medium', 'high'];
+
+taskSettingsStatus.addEventListener('click', e => { renderDOM.toggleSettingsViewTaskStatus(taskStatuses) });
+taskSettingsPriority.addEventListener('click', e => { renderDOM.toggleSettingsViewTaskPriorities(taskPriorities) });
 
 // close task settings sidebar
 document.addEventListener('click', e => {
