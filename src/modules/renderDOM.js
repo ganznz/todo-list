@@ -2,11 +2,14 @@ import { differenceInBusinessDays } from "date-fns";
 import Folder, { allFolders } from "./tasksFolder";
 
 // -- ELEMENTS -- //
+const mainContentContainer = document.querySelector('.main-content-container');
 const sidebarBlur = document.querySelector('.sidebar-blur');
 const taskSettingsDOM = document.querySelector('.task-settings');
 const folderMenu = document.querySelector('.folder-menu');
 const addFoldersBtn = document.querySelector('.add-folders');
-
+const upcomingTasksContainer = document.querySelector('.tasks-container.upcoming-tasks');
+const inprogressTasksContainer = document.querySelector('.tasks-container.inprogress-tasks');
+const completedTasksContainer = document.querySelector('.tasks-container.completed-tasks');
 const titleInput = taskSettingsDOM.querySelector('.task-minor-info-section > .sidebar-title > input');
 const taskStatusLabel = taskSettingsDOM.querySelector('.task-minor-container > .task-status > h5');
 const taskPriorityLabel = taskSettingsDOM.querySelector('.task-minor-container > .task-priority > h5');
@@ -28,10 +31,6 @@ export default class renderDOM {
   }
 
   static renderFolder = (folder) => {
-    const upcomingTasksContainer = document.querySelector('.tasks-container.upcoming-tasks');
-    const inprogressTasksContainer = document.querySelector('.tasks-container.inprogress-tasks');
-    const completedTasksContainer = document.querySelector('.tasks-container.completed-tasks');
-
     // removes old task DOM elements
     this.clearFolderTasksElements();
   }
@@ -140,21 +139,25 @@ const taskPriorities = ['low', 'medium', 'high'];
 
 document.addEventListener('click', e => {
   const target = e.target;
+  let priorityClassName;
 
   // change task settings status and priority
   if (target == taskSettingsStatus || target == taskSettingsPriority) {
     const folderIndex = folderMenu.querySelector('.selected-folder').getAttribute('folderindex');
     const taskIndex = taskSettingsDOM.getAttribute('taskindex');
+    const taskElements = document.getElementById(taskIndex);
+    const taskObj = allFolders[folderIndex].tasks[taskIndex]
 
     if (target.classList.contains('task-status')) { // update task status
       const statusClassName = renderDOM.toggleSettingsViewTaskStatus(taskStatuses);
-      allFolders[folderIndex].tasks[taskIndex].status = statusClassName;
-      console.log( allFolders[folderIndex].tasks[taskIndex].status)
+      taskObj.status = statusClassName;
     } else { // update task priority
-      const priorityClassName = renderDOM.toggleSettingsViewTaskPriorities(taskPriorities);
-      allFolders[folderIndex].tasks[taskIndex].priority = priorityClassName;
-      console.log(allFolders[folderIndex].tasks[taskIndex].priority)
+      priorityClassName = renderDOM.toggleSettingsViewTaskPriorities(taskPriorities);
+      taskObj.priority = priorityClassName;
+      taskElements.querySelector('.priority-label').classList.remove('low', 'medium', 'high');
+      taskElements.querySelector('.priority-label').classList.add(priorityClassName);
     }
+    renderDOM.appendTaskElementsToDOM(taskObj, taskElements);
   }
 
   // close task settings sidebar
