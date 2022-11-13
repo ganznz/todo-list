@@ -119,6 +119,7 @@ export default class renderDOM {
     label.className = '';
     label.classList.add(`${statuses[(previousIndex + 1) % statuses.length]}`);
     taskStatusLabel.textContent = label.className == 'upcoming' ? 'Upcoming' : (label.className == "inprogress" ? 'In Progress' : 'Completed');
+    return label.className;
   }
 
   static toggleSettingsViewTaskPriorities = (priorities) => {
@@ -127,44 +128,57 @@ export default class renderDOM {
     label.className = '';
     label.classList.add(`${priorities[(previousIndex + 1) % priorities.length]}`);
     taskPriorityLabel.textContent = label.className == 'low' ? 'Low' : (label.className == "medium" ? 'Medium' : 'High');
+    return label.className;
   }
 }
 
-// change task settings status and priority
+// values for changing task settings status and priority
 const taskSettingsStatus = taskSettingsDOM.querySelector('.task-status');
 const taskSettingsPriority = taskSettingsDOM.querySelector('.task-priority');
 const taskStatuses = ['upcoming', 'inprogress', 'completed'];
 const taskPriorities = ['low', 'medium', 'high'];
 
-taskSettingsStatus.addEventListener('click', e => { renderDOM.toggleSettingsViewTaskStatus(taskStatuses) });
-taskSettingsPriority.addEventListener('click', e => { renderDOM.toggleSettingsViewTaskPriorities(taskPriorities) });
-
-// close task settings sidebar
 document.addEventListener('click', e => {
-  if (e.target.classList.contains('task-settings-exit-btn') || (e.target.classList.contains('sidebar-blur'))) {
+  const target = e.target;
+
+  // change task settings status and priority
+  if (target == taskSettingsStatus || target == taskSettingsPriority) {
+    const folderIndex = folderMenu.querySelector('.selected-folder').getAttribute('folderindex');
+    const taskIndex = taskSettingsDOM.getAttribute('taskindex');
+
+    if (target.classList.contains('task-status')) { // update task status
+      const statusClassName = renderDOM.toggleSettingsViewTaskStatus(taskStatuses);
+      allFolders[folderIndex].tasks[taskIndex].status = statusClassName;
+      console.log( allFolders[folderIndex].tasks[taskIndex].status)
+    } else { // update task priority
+      const priorityClassName = renderDOM.toggleSettingsViewTaskPriorities(taskPriorities);
+      allFolders[folderIndex].tasks[taskIndex].priority = priorityClassName;
+      console.log(allFolders[folderIndex].tasks[taskIndex].priority)
+    }
+  }
+
+  // close task settings sidebar
+  if (target.classList.contains('task-settings-exit-btn') || (target.classList.contains('sidebar-blur'))) {
     renderDOM.closeTaskSettingsView(e);
     const selectedFolder = folderMenu.querySelector('.selected-folder');
     const selectedFolderIndex = selectedFolder.getAttribute('folderindex');
     const taskIndex = taskSettingsDOM.getAttribute('taskindex');
-
-    allFolders[selectedFolderIndex].updateTask(taskIndex); // update task
+    
+    // update task
+    allFolders[selectedFolderIndex].updateTask(taskIndex);
   }
-});
 
-// open folders sidebar
-document.addEventListener('click', e => {
-  if (e.target.classList.contains('folders-menu-icon')) {
+  // open folders sidebar
+  if (target.classList.contains('folders-menu-icon')) {
     [sidebarBlur, folderMenu].forEach(element => element.setAttribute('style', 'display: block'));
     setTimeout(() => {
       sidebarBlur.classList.add('visible');
       folderMenu.classList.add('visible');
     }, 100);
   }
-})
 
-// close folders sidebar
-document.addEventListener('click', e => {
-  if (e.target.classList.contains('folders-menu-exit-btn') || (e.target.classList.contains('sidebar-blur'))) {
+  // close folders sidebar
+  if (target.classList.contains('folders-menu-exit-btn') || (e.target.classList.contains('sidebar-blur'))) {
     renderDOM.closeFoldersSettingsView(e);
   }
 });
