@@ -1,19 +1,22 @@
-import { differenceInBusinessDays } from "date-fns";
+import { format, formatDistance} from "date-fns";
 import Folder, { allFolders } from "./tasksFolder";
 
 // -- ELEMENTS -- //
 const mainContentContainer = document.querySelector('.main-content-container');
 const sidebarBlur = document.querySelector('.sidebar-blur');
-const taskSettingsDOM = document.querySelector('.task-settings');
 const folderMenu = document.querySelector('.folder-menu');
 const addFoldersBtn = document.querySelector('.add-folders');
 const upcomingTasksContainer = document.querySelector('.tasks-container.upcoming-tasks');
 const inprogressTasksContainer = document.querySelector('.tasks-container.inprogress-tasks');
 const completedTasksContainer = document.querySelector('.tasks-container.completed-tasks');
+
+const taskSettingsDOM = document.querySelector('.task-settings');
 const titleInput = taskSettingsDOM.querySelector('.task-minor-info-section > .sidebar-title > input');
 const taskStatusLabel = taskSettingsDOM.querySelector('.task-minor-container > .task-status > h5');
 const taskPriorityLabel = taskSettingsDOM.querySelector('.task-minor-container > .task-priority > h5');
 const taskDescription = taskSettingsDOM.querySelector('.task-main-info-section > .task-description > textarea');
+const taskDateCreated = taskSettingsDOM.querySelector('.task-date-created > h5');
+const taskDateDue = taskSettingsDOM.querySelector('.task-date-due > input');
 
 export default class renderDOM {
 
@@ -40,21 +43,26 @@ export default class renderDOM {
     taskPerspectiveContainer.classList.add('task-perspective-container');
     const taskContainer = document.createElement('div');
     taskContainer.classList.add('task');
+
     const taskIcon = document.createElement('i');
     taskIcon.classList.add('fa-solid', 'fa-face-smile', 'fa-lg', 'task-icon');
+
     const taskInfoContainer = document.createElement('div');
     taskInfoContainer.classList.add('task-info-container');
     const h3 = document.createElement('h3');
     h3.textContent = task.name;
     const p = document.createElement('p');
-    p.textContent = 'Due 23/11/22';
+    p.textContent = `Due in ${formatDistance(task.dateCreated, task.dateDue)}`;
     const priorityLabel = document.createElement('div');
     priorityLabel.classList.add('priority-label', task.priority);
+
+    const deleteIcon = document.createElement('i');
+    deleteIcon.classList.add('fa-solid', 'fa-trash-can');
+
     taskInfoContainer.append(h3);
     taskInfoContainer.append(p);
     taskInfoContainer.append(priorityLabel);
-    const deleteIcon = document.createElement('i');
-    deleteIcon.classList.add('fa-solid', 'fa-trash-can');
+
     taskContainer.appendChild(taskIcon);
     taskContainer.appendChild(taskInfoContainer);
     taskContainer.appendChild(deleteIcon);
@@ -64,10 +72,6 @@ export default class renderDOM {
   }
 
   static appendTaskElementsToDOM = (task, taskElements) => {
-    const upcomingTasksContainer = document.querySelector('.tasks-container.upcoming-tasks');
-    const inprogressTasksContainer = document.querySelector('.tasks-container.inprogress-tasks');
-    const completedTasksContainer = document.querySelector('.tasks-container.completed-tasks');
-
     if (task.status == 'upcoming') {
       upcomingTasksContainer.appendChild(taskElements);
     } else if (task.status == 'inprogress') {
@@ -98,6 +102,9 @@ export default class renderDOM {
     taskPriorityLabel.className = '';
     taskPriorityLabel.classList.add(task.priority);
     taskPriorityLabel.textContent = task.priority == 'low' ? 'Low' : (task.priority == "medium" ? 'Medium' : 'High');
+    taskDateCreated.textContent = `${format(task.dateCreated, 'PP')} ${format(task.dateCreated, 'p')}`;
+    taskDateDue.setAttribute('value', `${format(task.dateDue, 'd')}-${format(task.dateDue, 'M')}-${format(task.dateDue, 'y')}`);
+    taskDateDue.value = `${format(task.dateDue, 'd')}-${format(task.dateDue, 'M')}-${format(task.dateDue, 'y')}`;
     taskDescription.setAttribute('value', task.description);
     taskDescription.value = task.description;
   }

@@ -3,8 +3,8 @@ export default class Task {
   #status;
   #priority;
   #index
-  #dateCreated;
-  #dateDue;
+  #dateCreated = new Date();
+  #dateDue = new Date();
   #description = "Add a description for this task!";
   #todos = [];
   
@@ -13,8 +13,7 @@ export default class Task {
     this.#status = status.toLowerCase();
     this.#priority = priority.toLowerCase();
     this.#index = index;
-    this.#dateCreated; // placeholder
-    this.#dateDue; // set for same day task was created
+    this.#dateDue.setHours(23, 59, 59); // sets initial due date to the end of the dateCreated date
   }
 
   get name() { return this.#name };
