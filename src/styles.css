@@ -435,6 +435,10 @@ main {
   color: var(--grey);
 }
 
+.task .task-info-container > p.overdue-task {
+  color: var(--priority-red);
+}
+
 .task .priority-label {
   width: 15px;
   height: 15px;
