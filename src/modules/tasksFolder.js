@@ -56,7 +56,7 @@ export default class Folder {
     taskObj.name = document.querySelector('.sidebar-title > input').value;
     taskObj.description = document.querySelector('.task-description > textarea').value;
     taskElementsDOM.querySelector('h3').textContent = taskObj.name;
-    taskObj.dateDue = new Date(taskSettingsDateDue);
+    taskObj.dateDue = taskSettingsDateDue.length > 0 ? new Date(taskSettingsDateDue) : new Date(taskObj.dateCreated.getFullYear(), taskObj.dateCreated.getMonth(), taskObj.dateCreated.getDate() + 1);
     
     const taskTodos = document.querySelectorAll('.task-todos > form > div');
     taskObj.todos.forEach((todo, index) => {

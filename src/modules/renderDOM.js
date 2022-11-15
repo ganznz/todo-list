@@ -1,4 +1,4 @@
-import { format, formatDistance} from "date-fns";
+import { format, formatDistance } from "date-fns";
 import Folder, { allFolders } from "./tasksFolder";
 import { setAttributes } from "./helperFunctions";
 
@@ -82,6 +82,21 @@ export default class renderDOM {
       inprogressTasksContainer.appendChild(taskElements);
     } else {
       completedTasksContainer.appendChild(taskElements);
+    }
+
+    // update task card due date info
+    const dueDateDescription = taskElements.querySelector('.task-info-container > p');
+    setInterval(() => { this.updateTaskCardDueDateDescription(task, dueDateDescription) }, 1000);
+  }
+
+  static updateTaskCardDueDateDescription = (task, element) => {
+    if (task.dateCreated < task.dateDue) {
+      element.textContent = `Due in ${formatDistance(task.dateCreated, task.dateDue)}`;
+      element.classList.remove('overdue-task');
+    } else {
+      element.textContent = `Overdue by about ${formatDistance(task.dateCreated, task.dateDue)}!`;
+      element.classList.add('overdue-task');
+      // setAttributes(element, {'style':'color: var(--priority-red)', 'font-weight':'700'});
     }
   }
 
