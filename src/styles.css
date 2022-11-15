@@ -139,7 +139,8 @@ svg > *{
 }
 
 .task-settings .sidebar-title input,
-.task-settings .task-description textarea {
+.task-settings .task-description textarea,
+.task-todos .form-checkbox-container input[type="text"] {
   border: none;
   padding: 5px;
   border-radius: 6px;
@@ -159,7 +160,8 @@ svg > *{
 
 .task-settings .task-minor-container h4,
 .task-minor-container h5,
-.task-minor-container input {
+.task-minor-container input,
+.task-todos .form-checkbox-container input[type="text"] {
   font-weight: 400;
   color: var(--grey);
   font-size: 0.9rem;
@@ -239,6 +241,15 @@ svg > *{
   padding: 10px;
 }
 
+.task-settings .task-main-info-section .form-checkbox-container {
+  display: flex;
+  gap: 10px;
+}
+
+.task-settings .task-todos .form-checkbox-container input[type="text"] {
+  flex: 1;
+}
+
 .task-settings .sidebar-title {
   margin-bottom: 50px;
 }
@@ -284,7 +295,6 @@ svg > *{
 
 .task-settings .form-checkbox-container svg {
   color: var(--priority-red);
-  margin-left: 20px;
 }
 
 .sidebar-blur {

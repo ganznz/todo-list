@@ -51,8 +51,18 @@ export default class Folder {
   updateTask = index => {
     const taskElementsDOM = document.getElementById(`${index}`);
     const taskObj = this.tasks[index];
+
+    const taskSettingsDateDue = document.querySelector('.task-date-due > input').value;
     taskObj.name = document.querySelector('.sidebar-title > input').value;
+    taskObj.description = document.querySelector('.task-description > textarea').value;
     taskElementsDOM.querySelector('h3').textContent = taskObj.name;
+    taskObj.dateDue = new Date(taskSettingsDateDue);
+    
+    const taskTodos = document.querySelectorAll('.task-todos > form > div');
+    taskObj.todos.forEach((todo, index) => {
+      const todoDescription = taskTodos[index].querySelector('input[type="text"]');
+      todo.description = todoDescription.value;
+    });
   };
 
   deleteTask = index => {

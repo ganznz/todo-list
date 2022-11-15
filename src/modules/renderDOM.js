@@ -1,5 +1,6 @@
 import { format, formatDistance} from "date-fns";
 import Folder, { allFolders } from "./tasksFolder";
+import { setAttributes } from "./helperFunctions";
 
 // -- ELEMENTS -- //
 const mainContentContainer = document.querySelector('.main-content-container');
@@ -17,6 +18,9 @@ const taskPriorityLabel = taskSettingsDOM.querySelector('.task-minor-container >
 const taskDescription = taskSettingsDOM.querySelector('.task-main-info-section > .task-description > textarea');
 const taskDateCreated = taskSettingsDOM.querySelector('.task-date-created > h5');
 const taskDateDue = taskSettingsDOM.querySelector('.task-date-due > input');
+const taskTodosSection = taskSettingsDOM.querySelector('.task-todos');
+const taskTodosForm = taskTodosSection.querySelector('form');
+
 
 export default class renderDOM {
 
@@ -81,6 +85,32 @@ export default class renderDOM {
     }
   }
 
+  static createTodoElements = (taskObj) => {
+    // clear todos previously shown in task settings
+    this.clearTodoElements();
+
+    taskObj.todos.forEach(todo => {
+      const todoContainer = document.createElement('div');
+      todoContainer.classList.add('form-checkbox-container');
+      const inputCheckbox = document.createElement('input');
+      setAttributes(inputCheckbox, {'type':'checkbox', 'id':`checkbox${taskObj.numOfTodos}`, 'name':`checkbox${taskObj.numOfTodos}`});
+      const inputDescription = document.createElement('input');
+      setAttributes(inputDescription, {'type':'text', 'value':todo.description});
+      const deleteIcon = document.createElement('i');
+      deleteIcon.classList.add('fa-solid', 'fa-square-minus', 'fa-xl');
+      
+      todoContainer.appendChild(inputCheckbox);
+      todoContainer.appendChild(inputDescription);
+      todoContainer.appendChild(deleteIcon);
+
+      taskTodosForm.insertBefore(todoContainer, taskTodosForm.querySelector('.add-todos.btn'));
+    })
+  }
+
+  static clearTodoElements = () => {
+    taskTodosForm.querySelectorAll('div').forEach(node => node.remove());
+  }
+
   static clearFolderTasksElements = () => {
     document.querySelectorAll('.tasks-container').forEach(container => container.innerHTML = "");
   }
@@ -103,10 +133,12 @@ export default class renderDOM {
     taskPriorityLabel.classList.add(task.priority);
     taskPriorityLabel.textContent = task.priority == 'low' ? 'Low' : (task.priority == "medium" ? 'Medium' : 'High');
     taskDateCreated.textContent = `${format(task.dateCreated, 'PP')} ${format(task.dateCreated, 'p')}`;
-    taskDateDue.setAttribute('value', `${format(task.dateDue, 'd')}-${format(task.dateDue, 'M')}-${format(task.dateDue, 'y')}`);
-    taskDateDue.value = `${format(task.dateDue, 'd')}-${format(task.dateDue, 'M')}-${format(task.dateDue, 'y')}`;
+    taskDateDue.value = `${format(task.dateDue, 'y')}-${format(task.dateDue, 'MM')}-${format(task.dateDue, 'dd')}`;
+    taskDateDue.setAttribute('value', `${format(task.dateDue, 'y')}-${format(task.dateDue, 'MM')}-${format(task.dateDue, 'dd')}`);
     taskDescription.setAttribute('value', task.description);
     taskDescription.value = task.description;
+
+    this.createTodoElements(task);
   }
 
   static closeTaskSettingsView = e => {
@@ -175,7 +207,10 @@ document.addEventListener('click', e => {
     const taskIndex = taskSettingsDOM.getAttribute('taskindex');
     
     // update task
-    allFolders[selectedFolderIndex].updateTask(taskIndex);
+    // conditional statement ensures to update task only when task settings menu is closing and not the folder menu too 
+    if (target.classList.contains('sidebar-blur') && taskSettingsDOM.getAttribute('style') == 'display: block') {
+      allFolders[selectedFolderIndex].updateTask(taskIndex);
+    }
   }
 
   // open folders sidebar
