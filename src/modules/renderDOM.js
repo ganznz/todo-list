@@ -95,44 +95,63 @@ export default class renderDOM {
       element.textContent = `Due in ${formatDistance(task.dateCreated, task.dateDue)}`;
       element.classList.remove('overdue-task');
     } else {
-      element.textContent = `Overdue by about ${formatDistance(task.dateCreated, task.dateDue)}!`;
+      element.textContent = `Overdue by ${formatDistance(task.dateCreated, task.dateDue)}!`;
       element.classList.add('overdue-task');
       // setAttributes(element, {'style':'color: var(--priority-red)', 'font-weight':'700'});
     }
   }
 
-  static createTodoElement = (taskObj, todo, num = taskObj.numOfTodos) => {
+  static createTodoElement = (taskObj, todo, todoIndex = taskObj.numOfTodos - 1) => {
     const todoContainer = document.createElement('div');
-      todoContainer.classList.add('form-checkbox-container');
-      const inputCheckbox = document.createElement('input');
+    todoContainer.classList.add('form-checkbox-container');
+    todoContainer.setAttribute('todoindex', todoIndex);
+    const inputCheckbox = document.createElement('input');
 
-      setAttributes(inputCheckbox, {'type':'checkbox', 'id':`checkbox${num}`, 'name':`checkbox${num}`, 'required':''});
-      
-      if (todo.status) { inputCheckbox.setAttribute('checked', '') };
-      const inputDescription = document.createElement('input');
-      setAttributes(inputDescription, {'type':'text', 'value':todo.description});
-      const deleteIcon = document.createElement('i');
-      deleteIcon.classList.add('fa-solid', 'fa-square-minus', 'fa-xl');
-      
-      todoContainer.appendChild(inputCheckbox);
-      todoContainer.appendChild(inputDescription);
-      todoContainer.appendChild(deleteIcon);
+    setAttributes(inputCheckbox, {'type':'checkbox', 'id':`checkbox${todoIndex}`, 'name':`checkbox${todoIndex}`, 'required':''});
+    
+    if (todo.status) { inputCheckbox.setAttribute('checked', '') };
+    const inputDescription = document.createElement('input');
+    setAttributes(inputDescription, {'type':'text', 'value':todo.description});
+    const deleteIcon = document.createElement('i');
+    deleteIcon.classList.add('fa-solid', 'fa-square-minus', 'fa-xl', 'todo-delete-icon');
+    
+    todoContainer.appendChild(inputCheckbox);
+    todoContainer.appendChild(inputDescription);
+    todoContainer.appendChild(deleteIcon);
 
-      taskTodosForm.insertBefore(todoContainer, taskTodosForm.querySelector('.add-todos.btn'));
+    taskTodosForm.insertBefore(todoContainer, taskTodosForm.querySelector('.add-todos.btn'));
+
+    todoContainer.addEventListener('click', e => {
+      if (e.target.classList.contains('todo-delete-icon')) {
+        taskObj.deleteTodo(todoIndex, todoContainer);
+      }
+    })
   }
 
   static createAllTodoElements = (taskObj) => {
     // clear todos previously shown in task settings
     this.clearTodoElements();
 
-    taskObj.todos.forEach((todo, num = 0) => {
-      this.createTodoElement(taskObj, todo, num);
-      num++;
+    taskObj.todos.forEach((todo, todoIndex = 0) => {
+      this.createTodoElement(taskObj, todo, todoIndex);
+      todoIndex++;
     })
   }
 
   static clearTodoElements = () => {
     taskTodosForm.querySelectorAll('div').forEach(node => node.remove());
+  }
+
+  static updateTodoIndexes = (indexToUpdateFrom) => {
+    // indexToUpdateFrom = todoIndex
+    const allTodoElements = taskTodosForm.querySelectorAll('div');
+    for (let i = indexToUpdateFrom + 1; i < allTodoElements.length; i++) {
+      const todoContainer = allTodoElements[i];
+      const todoCheckbox = todoContainer.querySelector('input[type="checkbox"]');
+      todoContainer.setAttribute('todoindex', i - 1);
+      setAttributes(todoCheckbox, {'id':`checkbox${i - 1}`, 'name':`checkbox${i - 1}`});
+    }
+
   }
 
   static clearFolderTasksElements = () => {

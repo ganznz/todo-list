@@ -72,8 +72,11 @@ export default class Task {
     renderDOM.createTodoElement(this, todo);
   };
 
-  deleteTodo = () => {
-
+  deleteTodo = (todoIndex, todoElements) => {
+    this.#numOfTodos--;
+    todoElements.remove();
+    this.todos.pop(todoIndex);
+    renderDOM.updateTodoIndexes(todoIndex);
   }
 
   completeTask = () => {
