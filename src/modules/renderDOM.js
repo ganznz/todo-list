@@ -87,17 +87,16 @@ export default class renderDOM {
 
     // update task card due date info
     const dueDateDescription = taskElements.querySelector('.task-info-container > p');
-    setInterval(() => { this.updateTaskCardDueDateDescription(task, dueDateDescription) }, 1000);
+    setInterval(() => { this.updateTaskCardDueDateDescription(task, dueDateDescription) }, 10000);
   }
 
   static updateTaskCardDueDateDescription = (task, element) => {
     if (task.dateCreated < task.dateDue) {
-      element.textContent = `Due in ${formatDistance(task.dateCreated, task.dateDue)}`;
+      element.textContent = `Due in ${formatDistance(new Date(), task.dateDue)}`;
       element.classList.remove('overdue-task');
     } else {
-      element.textContent = `Overdue by ${formatDistance(task.dateCreated, task.dateDue)}!`;
+      element.textContent = `Overdue by ${formatDistance(new Date(), task.dateDue)}!`;
       element.classList.add('overdue-task');
-      // setAttributes(element, {'style':'color: var(--priority-red)', 'font-weight':'700'});
     }
   }
 
@@ -151,7 +150,7 @@ export default class renderDOM {
       setAttributes(todoCheckbox, {'id':`checkbox${i}`, 'name':`checkbox${i}`});
     }
   }
-  
+
   static clearFolderTasksElements = () => {
     document.querySelectorAll('.tasks-container').forEach(container => container.innerHTML = "");
   }
@@ -222,6 +221,18 @@ const taskPriorities = ['low', 'medium', 'high'];
 document.addEventListener('click', e => {
   const target = e.target;
   let priorityClassName;
+
+  // delete task
+  if (target.classList.contains('task-settings-delete-icon')) {
+    const folderIndex = folderMenu.querySelector('.selected-folder').getAttribute('folderindex');
+    const folderObj = allFolders[folderIndex];
+    const taskIndex = taskSettingsDOM.getAttribute('taskindex');
+    const taskCardElements = document.getElementById(taskIndex);
+    folderObj.deleteTask(taskIndex, taskCardElements);
+    sidebarBlur.classList.remove('visible');
+    taskSettingsDOM.classList.remove('visible');
+    
+  }
 
   // change task settings status and priority
   if (target == taskSettingsStatus || target == taskSettingsPriority) {

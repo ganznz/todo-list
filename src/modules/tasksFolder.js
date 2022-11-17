@@ -67,6 +67,9 @@ export default class Folder {
     
     taskObj.updateDateDue();
     taskObj.updateTodos();
+
+    const dueDateDescription = taskElementsDOM.querySelector('.task-info-container > p');
+    renderDOM.updateTaskCardDueDateDescription(taskObj, dueDateDescription);
   };
 
   deleteTask = (taskIndex, taskElements) => {
