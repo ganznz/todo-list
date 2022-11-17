@@ -43,14 +43,56 @@ export default class renderDOM {
     this.clearFolderTasksElements();
   }
 
+  static chooseTaskElementIcon = () => {
+    const allTaskIcons = [
+      'fa-scroll',
+      'fa-palette',
+      'fa-code',
+      'fa-face-smile',
+      'fa-book',
+      'fa-money-bill',
+      'fa-comments',
+      'fa-tree',
+      'fa-newspaper',
+      'fa-wrench',
+      'fa-crown',
+      'fa-circle-check',
+      'fa-volleyball',
+      'fa-peace',
+      'fa-paw',
+      'fa-paintbrush',
+      'fa-pen-clip',
+      'fa-message',
+      'fa-gas-pump',
+      'fa-bread-slice',
+      'fa-car',
+      'fa-bus-simple',
+      'fa-apple-whole',
+      'fa-gamepad',
+      'fa-cookie-bite',
+      'fa-child',
+      'fa-handshake',
+      'fa-gift',
+      'fa-heart',
+      'fa-leaf',
+      'fa-globe',
+      'fa-plane-arrival',
+      'fa-user-tie',
+    ]
+    const taskIcon = document.createElement('i');
+    const chosenIcon = allTaskIcons[Math.floor(Math.random() * allTaskIcons.length)];
+    taskIcon.classList.add('fa-solid', chosenIcon, 'task-icon');
+    return taskIcon;
+  }
+
   static createTaskElements = (task, index) => {
     const taskPerspectiveContainer = document.createElement('div');
     taskPerspectiveContainer.classList.add('task-perspective-container');
     const taskContainer = document.createElement('div');
     taskContainer.classList.add('task');
 
-    const taskIcon = document.createElement('i');
-    taskIcon.classList.add('fa-solid', 'fa-face-smile', 'fa-lg', 'task-icon');
+    const taskIcon = this.chooseTaskElementIcon();
+    // taskIcon.classList.add('fa-solid', 'fa-face-smile', 'fa-lg', 'task-icon');
 
     const taskInfoContainer = document.createElement('div');
     taskInfoContainer.classList.add('task-info-container');
@@ -181,7 +223,7 @@ export default class renderDOM {
     this.createAllTodoElements(task);
   }
 
-  static closeTaskSettingsView = e => {
+  static closeTaskSettingsView = (e = null) => {
     [taskSettingsDOM, sidebarBlur].forEach(element => element.classList.remove('visible'));
     setTimeout(() => { [taskSettingsDOM, sidebarBlur].forEach(element => element.setAttribute('style', 'display: none')) }, 1000);
   }
@@ -245,9 +287,20 @@ document.addEventListener('click', e => {
   if (target.classList.contains('add-todos')) {
     const folderIndex = folderMenu.querySelector('.selected-folder').getAttribute('folderindex');
     const taskIndex = taskSettingsDOM.getAttribute('taskindex');
-    const taskElements = document.getElementById(taskIndex);
     const taskObj = allFolders[folderIndex].tasks[taskIndex];
     taskObj.createTodo();
+  }
+
+  // complete task
+  if (target.classList.contains('complete-task-btn')) {
+    e.preventDefault();
+    const folderIndex = folderMenu.querySelector('.selected-folder').getAttribute('folderindex');
+    const taskIndex = taskSettingsDOM.getAttribute('taskindex');
+    const taskObj = allFolders[folderIndex].tasks[taskIndex];
+    const completeTaskBtn = document.querySelector('.complete-task-btn');
+
+    allFolders[folderIndex].updateTask(taskIndex); // ensures todo status' are updated
+    taskObj.completeTask();
   }
 
   // close task settings sidebar
@@ -261,6 +314,7 @@ document.addEventListener('click', e => {
     // conditional statement ensures to update task only when task settings menu is closing and not the folder menu too 
     if (target.classList.contains('sidebar-blur') && taskSettingsDOM.getAttribute('style') == 'display: block') {
       allFolders[selectedFolderIndex].updateTask(taskIndex);
+      allFolders[selectedFolderIndex].tasks[taskIndex].completeTask();
     }
   }
 
