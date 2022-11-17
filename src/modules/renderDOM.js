@@ -222,18 +222,6 @@ document.addEventListener('click', e => {
   const target = e.target;
   let priorityClassName;
 
-  // delete task
-  if (target.classList.contains('task-settings-delete-icon')) {
-    const folderIndex = folderMenu.querySelector('.selected-folder').getAttribute('folderindex');
-    const folderObj = allFolders[folderIndex];
-    const taskIndex = taskSettingsDOM.getAttribute('taskindex');
-    const taskCardElements = document.getElementById(taskIndex);
-    folderObj.deleteTask(taskIndex, taskCardElements);
-    sidebarBlur.classList.remove('visible');
-    taskSettingsDOM.classList.remove('visible');
-    
-  }
-
   // change task settings status and priority
   if (target == taskSettingsStatus || target == taskSettingsPriority) {
     const folderIndex = folderMenu.querySelector('.selected-folder').getAttribute('folderindex');
