@@ -10,7 +10,7 @@ export const setAttributes = (element, attrs) => {
   }
 }
 
-const txInitialHeight = 50;
+const txInitialHeight = 60;
 const tx = document.getElementsByTagName("textarea");
 for (let i = 0; i < tx.length; i++) {
   (tx[i].value == 'Add a description for this task!')

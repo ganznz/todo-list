@@ -110,12 +110,15 @@ svg > *{
 }
 
 .task-settings {
-  padding: calc(var(--main-padding) / 2);
   top: 0;
   right: -100%;
   transform: translateX(-0);
   width: 500px;
   filter: drop-shadow(-3px 0 5px rgba(0, 0, 0, 0.1));
+}
+
+.task-settings > *:not(.task-main-info-section) {
+  margin: calc(var(--main-padding) / 2);
 }
 
 .task-settings.visible {
@@ -141,6 +144,12 @@ svg > *{
 
 .task-settings .sidebar-title input {
   font-size: 1.4rem;
+}
+
+.task-settings .task-description,
+.task-settings .task-todos h2,
+.task-settings .task-todos form >:not(div) {
+  margin: 0 calc(var(--main-padding) / 2);
 }
 
 .task-settings .sidebar-title input,
@@ -248,11 +257,23 @@ svg > *{
 
 .task-settings .task-main-info-section .form-checkbox-container {
   display: flex;
+  align-items: center;
   gap: 10px;
+  padding: 0 calc(var(--main-padding) / 2);
+  transition: all 0.2s;
+}
+
+.task-settings .task-main-info-section .form-checkbox-container:hover,
+.task-settings .task-todos .form-checkbox-container input[type="text"] {
+  background-color: rgb(240, 240, 240);
 }
 
 .task-settings .task-todos .form-checkbox-container input[type="text"] {
   flex: 1;
+}
+
+.task-settings .task-todos .form-checkbox-container input[type="checkbox"] {
+  scale: 1.1;
 }
 
 .task-settings .sidebar-title {
@@ -280,7 +301,7 @@ svg > *{
 .task-settings .task-main-info-section form {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 10px;
 }
 
 .task-settings .task-main-info-section form button[type="submit"] {
@@ -300,6 +321,12 @@ svg > *{
 
 .task-settings .form-checkbox-container svg {
   color: var(--priority-red);
+  transition: all 0.3s;
+}
+
+.task-settings .form-checkbox-container svg:hover {
+  filter: brightness(1.2);
+  scale: 1.2;
 }
 
 .sidebar-blur {
@@ -345,7 +372,7 @@ main {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
-  padding: 15px 0;
+  padding: 15px;
   flex-grow: 1;
   overflow: auto;
 }
@@ -494,9 +521,7 @@ main {
   content: "Low";
 }
 
-.tasks-section > .add-tasks,
-.task-main-info-section form .add-todos,
-.folder-menu .add-folders {
+.add-btn {
   background-color: var(--accent-light-grey);
   color: var(--grey);
   border: none;
@@ -504,11 +529,18 @@ main {
   width: 30px;
   height: 30px;
 }
-
 .tasks-section > .add-tasks > *,
 .task-main-info-section form .add-todos > *,
 .folder-menu .add-folders > * {
   pointer-events: none;
+}
+
+.add-btn {
+  transition: all 0.2s;
+}
+
+.add-btn:hover {
+  transform: scale(1.2);
 }
 
 footer {

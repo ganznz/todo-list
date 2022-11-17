@@ -43,7 +43,6 @@ export default class Folder {
         return;
       }
       renderDOM.showTaskSettingsView(task);
-
     });
   };
 
