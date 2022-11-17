@@ -67,8 +67,9 @@ export default class Task {
   createTodo = () => {
     this.#numOfTodos++;
     // const todo = new Todo(`Todo ${this.numOfTodos}`);
-    const todo = new Todo('Enter a description');
+    const todo = new Todo('Add a description');
     this.todos.push(todo);
+    renderDOM.createTodoElement(this, todo);
   };
 
   deleteTodo = () => {

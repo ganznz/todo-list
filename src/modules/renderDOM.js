@@ -101,17 +101,14 @@ export default class renderDOM {
     }
   }
 
-  static createTodoElements = (taskObj) => {
-    // clear todos previously shown in task settings
-    this.clearTodoElements();
-
-    taskObj.todos.forEach((todo, num = 0) => {
-      const todoContainer = document.createElement('div');
+  static createTodoElement = (taskObj, todo, num = taskObj.numOfTodos) => {
+    const todoContainer = document.createElement('div');
       todoContainer.classList.add('form-checkbox-container');
       const inputCheckbox = document.createElement('input');
+
       setAttributes(inputCheckbox, {'type':'checkbox', 'id':`checkbox${num}`, 'name':`checkbox${num}`, 'required':''});
+      
       if (todo.status) { inputCheckbox.setAttribute('checked', '') };
-      num++;
       const inputDescription = document.createElement('input');
       setAttributes(inputDescription, {'type':'text', 'value':todo.description});
       const deleteIcon = document.createElement('i');
@@ -122,6 +119,15 @@ export default class renderDOM {
       todoContainer.appendChild(deleteIcon);
 
       taskTodosForm.insertBefore(todoContainer, taskTodosForm.querySelector('.add-todos.btn'));
+  }
+
+  static createAllTodoElements = (taskObj) => {
+    // clear todos previously shown in task settings
+    this.clearTodoElements();
+
+    taskObj.todos.forEach((todo, num = 0) => {
+      this.createTodoElement(taskObj, todo, num);
+      num++;
     })
   }
 
@@ -156,7 +162,7 @@ export default class renderDOM {
     taskDescription.setAttribute('value', task.description);
     taskDescription.value = task.description;
 
-    this.createTodoElements(task);
+    this.createAllTodoElements(task);
   }
 
   static closeTaskSettingsView = e => {
@@ -188,6 +194,8 @@ export default class renderDOM {
   }
 }
 
+
+
 // values for changing task settings status and priority
 const taskSettingsStatus = taskSettingsDOM.querySelector('.task-status');
 const taskSettingsPriority = taskSettingsDOM.querySelector('.task-priority');
@@ -203,7 +211,7 @@ document.addEventListener('click', e => {
     const folderIndex = folderMenu.querySelector('.selected-folder').getAttribute('folderindex');
     const taskIndex = taskSettingsDOM.getAttribute('taskindex');
     const taskElements = document.getElementById(taskIndex);
-    const taskObj = allFolders[folderIndex].tasks[taskIndex]
+    const taskObj = allFolders[folderIndex].tasks[taskIndex];
 
     if (target.classList.contains('task-status')) { // update task status
       const statusClassName = renderDOM.toggleSettingsViewTaskStatus(taskStatuses);
@@ -215,6 +223,15 @@ document.addEventListener('click', e => {
       taskElements.querySelector('.priority-label').classList.add(priorityClassName);
     }
     renderDOM.appendTaskElementsToDOM(taskObj, taskElements);
+  }
+
+  // add task todos
+  if (target.classList.contains('add-todos')) {
+    const folderIndex = folderMenu.querySelector('.selected-folder').getAttribute('folderindex');
+    const taskIndex = taskSettingsDOM.getAttribute('taskindex');
+    const taskElements = document.getElementById(taskIndex);
+    const taskObj = allFolders[folderIndex].tasks[taskIndex];
+    taskObj.createTodo();
   }
 
   // close task settings sidebar
