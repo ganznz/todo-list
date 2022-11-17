@@ -60,7 +60,6 @@ export default class Task {
       const todoDescription = taskTodos[index].querySelector('input[type="text"]');
       const todoCheckbox = todoDescription.parentElement.querySelector('input[type="checkbox"]');
       todo.status = todoCheckbox.checked == true;
-      console.log(todo.status)
       todo.description = todoDescription.value;
     });
   }
