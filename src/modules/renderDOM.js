@@ -62,7 +62,7 @@ export default class renderDOM {
     priorityLabel.classList.add('priority-label', task.priority);
 
     const deleteIcon = document.createElement('i');
-    deleteIcon.classList.add('fa-solid', 'fa-trash-can');
+    deleteIcon.classList.add('fa-solid', 'fa-trash-can', 'task-delete-icon');
 
     taskInfoContainer.append(h3);
     taskInfoContainer.append(p);
@@ -143,17 +143,15 @@ export default class renderDOM {
   }
 
   static updateTodoIndexes = (indexToUpdateFrom) => {
-    // indexToUpdateFrom = todoIndex
     const allTodoElements = taskTodosForm.querySelectorAll('div');
-    for (let i = indexToUpdateFrom + 1; i < allTodoElements.length; i++) {
+    for (let i = indexToUpdateFrom; i < allTodoElements.length; i++) {
       const todoContainer = allTodoElements[i];
       const todoCheckbox = todoContainer.querySelector('input[type="checkbox"]');
-      todoContainer.setAttribute('todoindex', i - 1);
-      setAttributes(todoCheckbox, {'id':`checkbox${i - 1}`, 'name':`checkbox${i - 1}`});
+      todoContainer.setAttribute('todoindex', i);
+      setAttributes(todoCheckbox, {'id':`checkbox${i}`, 'name':`checkbox${i}`});
     }
-
   }
-
+  
   static clearFolderTasksElements = () => {
     document.querySelectorAll('.tasks-container').forEach(container => container.innerHTML = "");
   }

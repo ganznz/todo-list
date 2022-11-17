@@ -34,8 +34,17 @@ export default class Folder {
     
     this.#tasks.push(task);
     const taskElements = renderDOM.createTaskElements(task, this.numOfTasks - 1);
-    taskElements.addEventListener('click', () => renderDOM.showTaskSettingsView(task));
     renderDOM.appendTaskElementsToDOM(task, taskElements);
+    const taskIndex = taskElements.getAttribute('id');
+
+    taskElements.addEventListener('click', e => {
+      if (e.target.classList.contains('task-delete-icon')) {
+        this.deleteTask(taskIndex, taskElements);
+        return;
+      }
+      renderDOM.showTaskSettingsView(task);
+
+    });
   };
 
   determineTaskStatus = e => {
@@ -60,7 +69,9 @@ export default class Folder {
     taskObj.updateTodos();
   };
 
-  deleteTask = index => {
+  deleteTask = (taskIndex, taskElements) => {
     this.#numOfTasks--;
+    this.tasks.pop(taskIndex);
+    taskElements.remove();
   };
 }

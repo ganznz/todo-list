@@ -76,7 +76,7 @@ export default class Task {
     this.#numOfTodos--;
     todoElements.remove();
     this.todos.pop(todoIndex);
-    renderDOM.updateTodoIndexes(todoIndex);
+    renderDOM.updateTodoIndexes(parseInt(todoIndex));
   }
 
   completeTask = () => {
