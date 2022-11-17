@@ -11,9 +11,8 @@ export default class Folder {
   constructor() {
     if (!(this.#numOfTasks)) { // create default tasks
       this.createTask('upcoming');
+      this.createTask('upcoming');
       this.createTask('inprogress');
-      this.createTask('inprogress');
-      this.createTask('completed');
     }
   };
 

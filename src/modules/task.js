@@ -80,6 +80,22 @@ export default class Task {
   }
 
   completeTask = () => {
-    
+    const taskIndex = document.querySelector('.task-settings').getAttribute('taskindex');
+    const taskElements = document.getElementById(taskIndex);
+    if (this.isComplete()) {
+      this.status = 'completed';
+      renderDOM.closeTaskSettingsView();
+      renderDOM.appendTaskElementsToDOM(this, taskElements);
+      return
+    }
+
+    // if task not completed remove from completed tasks section
+    this.status = this.status == 'completed' ? 'upcoming' : (this.status == 'inprogress' ? 'inprogress' : 'upcoming');
+    renderDOM.closeTaskSettingsView();
+    renderDOM.appendTaskElementsToDOM(this, taskElements);
+  }
+
+  isComplete = () => {
+    return this.todos.every(todo => todo.status == true);
   }
 };
