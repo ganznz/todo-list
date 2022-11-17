@@ -3,6 +3,7 @@ import Folder, { allFolders } from "./tasksFolder";
 import { setAttributes } from "./helperFunctions";
 
 // -- ELEMENTS -- //
+const allContentContainer = document.querySelector('.all-content');
 const mainContentContainer = document.querySelector('.main-content-container');
 const sidebarBlur = document.querySelector('.sidebar-blur');
 const folderMenu = document.querySelector('.folder-menu');
@@ -104,11 +105,13 @@ export default class renderDOM {
     // clear todos previously shown in task settings
     this.clearTodoElements();
 
-    taskObj.todos.forEach(todo => {
+    taskObj.todos.forEach((todo, num = 0) => {
       const todoContainer = document.createElement('div');
       todoContainer.classList.add('form-checkbox-container');
       const inputCheckbox = document.createElement('input');
-      setAttributes(inputCheckbox, {'type':'checkbox', 'id':`checkbox${taskObj.numOfTodos}`, 'name':`checkbox${taskObj.numOfTodos}`});
+      setAttributes(inputCheckbox, {'type':'checkbox', 'id':`checkbox${num}`, 'name':`checkbox${num}`, 'required':''});
+      if (todo.status) { inputCheckbox.setAttribute('checked', '') };
+      num++;
       const inputDescription = document.createElement('input');
       setAttributes(inputDescription, {'type':'text', 'value':todo.description});
       const deleteIcon = document.createElement('i');
@@ -157,13 +160,13 @@ export default class renderDOM {
   }
 
   static closeTaskSettingsView = e => {
-      [taskSettingsDOM, sidebarBlur].forEach(element => element.classList.remove('visible'));
-      setTimeout(() => { [taskSettingsDOM, sidebarBlur].forEach(element => element.setAttribute('style', 'display: none')) }, 1000);
+    [taskSettingsDOM, sidebarBlur].forEach(element => element.classList.remove('visible'));
+    setTimeout(() => { [taskSettingsDOM, sidebarBlur].forEach(element => element.setAttribute('style', 'display: none')) }, 1000);
   }
 
   static closeFoldersSettingsView = e => {
-      [folderMenu, sidebarBlur].forEach(element => element.classList.remove('visible'));
-      setTimeout(() => { [folderMenu, sidebarBlur].forEach(element => element.setAttribute('style', 'display: none')) }, 1000);
+    [folderMenu, sidebarBlur].forEach(element => element.classList.remove('visible'));
+    setTimeout(() => { [folderMenu, sidebarBlur].forEach(element => element.setAttribute('style', 'display: none')) }, 1000);
   }
 
   static toggleSettingsViewTaskStatus = (statuses) => {
