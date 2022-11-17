@@ -304,7 +304,7 @@ svg > *{
   gap: 10px;
 }
 
-.task-settings .task-main-info-section form button[type="submit"] {
+.task-settings .task-main-info-section form button.complete-task-btn {
   margin-top: var(--task-settings-main-info-section-margin);
   padding: 10px;
   border: none;
@@ -315,7 +315,7 @@ svg > *{
   transition: all 0.2s;
 }
 
-.task-settings .task-main-info-section form button[type="submit"]:hover {
+.task-settings .task-main-info-section form button.complete-task-btn:hover {
   filter: drop-shadow(0 5px 0 rgb(123, 180, 108));
 }
 
