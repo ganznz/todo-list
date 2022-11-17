@@ -350,6 +350,10 @@ main {
   overflow: auto;
 }
 
+.tasks-section {
+  width: 200px;
+}
+
 .tasks-section, .tasks-container {
   display: flex;
   flex-direction: column;
