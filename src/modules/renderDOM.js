@@ -104,7 +104,7 @@ export default class renderDOM {
     priorityLabel.classList.add('priority-label', task.priority);
 
     const deleteIcon = document.createElement('i');
-    deleteIcon.classList.add('fa-solid', 'fa-trash-can', 'task-delete-icon');
+    deleteIcon.classList.add('fa-solid', 'fa-trash-can', 'fa-lg',  'task-delete-icon');
 
     taskInfoContainer.append(h3);
     taskInfoContainer.append(p);
@@ -198,7 +198,7 @@ export default class renderDOM {
   }
 
   static showTaskSettingsView = (task) => {
-    [sidebarBlur, taskSettingsDOM].forEach(element => element.setAttribute('style', 'display: block'));
+    [sidebarBlur, taskSettingsDOM].forEach(element => element.setAttribute('style', 'display: flex'));
     taskSettingsDOM.setAttribute('taskindex', task.index);
 
     setTimeout(() => {
@@ -272,8 +272,18 @@ document.addEventListener('click', e => {
     const taskObj = allFolders[folderIndex].tasks[taskIndex];
 
     if (target.classList.contains('task-status')) { // update task status
+      const prevStatus = taskObj.status;
       const statusClassName = renderDOM.toggleSettingsViewTaskStatus(taskStatuses);
       taskObj.status = statusClassName;
+
+      if (taskObj.status == 'completed') {
+        taskObj.setAllTodosTrue()
+        renderDOM.createAllTodoElements(taskObj);
+      } else if (prevStatus == 'completed') {
+        taskObj.setAllTodosFalse();
+        renderDOM.createAllTodoElements(taskObj);
+      }
+    
     } else { // update task priority
       priorityClassName = renderDOM.toggleSettingsViewTaskPriorities(taskPriorities);
       taskObj.priority = priorityClassName;
@@ -312,7 +322,7 @@ document.addEventListener('click', e => {
     
     // update task
     // conditional statement ensures to update task only when task settings menu is closing and not the folder menu too 
-    if (target.classList.contains('sidebar-blur') && taskSettingsDOM.getAttribute('style') == 'display: block') {
+    if ((target.classList.contains('sidebar-blur') || (target.classList.contains('task-settings-exit-btn'))) && taskSettingsDOM.getAttribute('style') == 'display: flex') {
       allFolders[selectedFolderIndex].updateTask(taskIndex);
       allFolders[selectedFolderIndex].tasks[taskIndex].completeTask();
     }
@@ -320,7 +330,7 @@ document.addEventListener('click', e => {
 
   // open folders sidebar
   if (target.classList.contains('folders-menu-icon')) {
-    [sidebarBlur, folderMenu].forEach(element => element.setAttribute('style', 'display: block'));
+    [sidebarBlur, folderMenu].forEach(element => element.setAttribute('style', 'display: flex'));
     setTimeout(() => {
       sidebarBlur.classList.add('visible');
       folderMenu.classList.add('visible');

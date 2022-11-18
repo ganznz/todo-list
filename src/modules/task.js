@@ -79,6 +79,14 @@ export default class Task {
     renderDOM.updateTodoIndexes(parseInt(todoIndex));
   }
 
+  setAllTodosTrue = () => {
+    this.todos.forEach(todo => { todo.status = true });
+  }
+
+  setAllTodosFalse = () => {
+    this.todos.forEach(todo => { todo.status = false });
+  }
+
   completeTask = () => {
     const taskIndex = document.querySelector('.task-settings').getAttribute('taskindex');
     const taskElements = document.getElementById(taskIndex);
