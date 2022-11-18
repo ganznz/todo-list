@@ -46,6 +46,10 @@ svg > *{
   z-index: 2;
   height: 100vh;
   position: absolute;
+  display: flex;
+  gap: 40px;
+  padding-top: calc(var(--main-padding) / 2);
+  flex-direction: column;
   background-color: #FFFF;
   overflow: scroll;
   display: none;
@@ -53,18 +57,15 @@ svg > *{
 }
 
 .folder-menu {
-  padding-top: calc(var(--main-padding) / 2);
   top: 0;
   left: -100%;
   min-width: 300px;
   filter: drop-shadow(3px 0 5px rgba(0, 0, 0, 0.1));
-  flex-direction: column;
-  gap: calc(var(--main-padding) / 2);
 }
 
-.folder-menu > *:not(:last-child) {
+/* .folder-menu > *:not(:last-child) {
   margin-bottom: 30px;
-}
+} */
 
 .folder-menu > *:not(.folders-list) {
   display: flex;
@@ -118,7 +119,7 @@ svg > *{
 }
 
 .task-settings > *:not(.task-main-info-section) {
-  margin: calc(var(--main-padding) / 2);
+  margin: 0 calc(var(--main-padding) / 2);
 }
 
 .task-settings.visible {
@@ -233,10 +234,6 @@ svg > *{
 .task-settings .task-priority > h5.low {
   background-color: var(--accent-green);
   transition: all 0.2s;
-}
-
-.task-settings .task-main-info-section > * {
-  margin-top: var(--task-settings-main-info-section-margin);
 }
 
 .task-settings .task-main-info-section h2 {
