@@ -2,6 +2,7 @@
   --main-padding: 60px;
   --grey: #7C7C7C;
   --accent-light-grey: #DFDFDF;
+  --accent-lightest-grey: #f0f0f0;
   --accent-orange: #FFCD93;
   --accent-green: #AEDEAA;
   --priority-red: #FF7A7A;
@@ -106,8 +107,9 @@ svg > *{
   gap: 20px;
 }
 
-.folder-menu ul li.selected {
-  background-color: var(--accent-light-grey);
+.folder-menu ul li.selected-folder {
+  background-color: var(--accent-lightest-grey);
+  transition: all 0.2s;
 }
 
 .task-settings {

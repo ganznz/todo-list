@@ -35,14 +35,6 @@ export default class Folder {
     const taskElements = renderDOM.createTaskElements(task, this.numOfTasks - 1);
     renderDOM.appendTaskElementsToDOM(task, taskElements);
     const taskIndex = taskElements.getAttribute('id');
-
-    taskElements.addEventListener('click', e => {
-      if (e.target.classList.contains('task-delete-icon')) {
-        this.deleteTask(taskIndex, taskElements);
-        return;
-      }
-      renderDOM.showTaskSettingsView(task);
-    });
   };
 
   determineTaskStatus = e => {
