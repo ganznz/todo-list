@@ -43,7 +43,7 @@ export default class renderDOM {
     this.clearFolderTasksElements();
   }
 
-  static chooseTaskElementIcon = () => {
+  static chooseTaskIcon = () => {
     const allTaskIcons = [
       'fa-scroll',
       'fa-palette',
@@ -79,10 +79,7 @@ export default class renderDOM {
       'fa-plane-arrival',
       'fa-user-tie',
     ]
-    const taskIcon = document.createElement('i');
-    const chosenIcon = allTaskIcons[Math.floor(Math.random() * allTaskIcons.length)];
-    taskIcon.classList.add('fa-solid', chosenIcon, 'task-icon');
-    return taskIcon;
+    return allTaskIcons[Math.floor(Math.random() * allTaskIcons.length)];
   }
 
   static createTaskElements = (task, index) => {
@@ -91,8 +88,8 @@ export default class renderDOM {
     const taskContainer = document.createElement('div');
     taskContainer.classList.add('task');
 
-    const taskIcon = this.chooseTaskElementIcon();
-    // taskIcon.classList.add('fa-solid', 'fa-face-smile', 'fa-lg', 'task-icon');
+    const taskIcon = document.createElement('i');
+    taskIcon.classList.add('fa-solid', task.icon, 'task-icon');
 
     const taskInfoContainer = document.createElement('div');
     taskInfoContainer.classList.add('task-info-container');

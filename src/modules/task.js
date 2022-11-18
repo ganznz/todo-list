@@ -11,6 +11,7 @@ export default class Task {
   #description = "Add a description for this task!";
   #todos = [];
   #numOfTodos = 0;
+  #icon = renderDOM.chooseTaskIcon();
   
   constructor(name, status, priority, index) {
     this.#name = name;
@@ -35,6 +36,7 @@ export default class Task {
   get description() { return this.#description };
   get todos() { return this.#todos };
   get numOfTodos() { return this.#numOfTodos };
+  get icon() { return this.#icon };
   
   set name(value) { this.#name = value };
   set status(value) { this.#status = value };
