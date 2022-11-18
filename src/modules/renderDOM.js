@@ -25,11 +25,11 @@ const taskTodosForm = taskTodosSection.querySelector('form');
 
 export default class renderDOM {
 
-  static addFolderToSidebar = (folder) => {
+  static addFolderToSidebar = (folderObj) => {
     const ul = folderMenu.querySelector('ul');
     const li = document.createElement('li');
     li.setAttribute('folderindex', allFolders.length - 1)
-    li.textContent = folder.name;
+    li.textContent = folderObj.name;
     if (allFolders.length > 1) {
       const previouslySelected = folderMenu.querySelector('.selected-folder');
       previouslySelected.classList.remove('selected-folder');
@@ -38,9 +38,14 @@ export default class renderDOM {
     ul.appendChild(li)
   }
 
-  static renderFolder = (folder) => {
+  static renderFolder = (folderObj) => {
     // removes old task DOM elements
     this.clearFolderTasksElements();
+
+    for (let i = 0; i < folderObj.tasks.length; i++) {
+      const taskElements = this.createTaskElements(folderObj.tasks[i], i);
+      this.appendTaskElementsToDOM(folderObj.tasks[i], taskElements);
+    }
   }
 
   static chooseTaskIcon = () => {
@@ -89,7 +94,7 @@ export default class renderDOM {
     taskContainer.classList.add('task');
 
     const taskIcon = document.createElement('i');
-    taskIcon.classList.add('fa-solid', task.icon, 'task-icon');
+    taskIcon.classList.add('fa-solid', task.icon, 'fa-lg',  'task-icon');
 
     const taskInfoContainer = document.createElement('div');
     taskInfoContainer.classList.add('task-info-container');
@@ -123,6 +128,15 @@ export default class renderDOM {
     } else {
       completedTasksContainer.appendChild(taskElements);
     }
+
+    // add click event listeners to card task card
+    taskElements.addEventListener('click', e => {
+      if (e.target.classList.contains('task-delete-icon')) {
+        this.deleteTask(taskIndex, taskElements);
+        return;
+      }
+      renderDOM.showTaskSettingsView(task);
+    });
 
     // update task card due date info
     const dueDateDescription = taskElements.querySelector('.task-info-container > p');
@@ -225,7 +239,7 @@ export default class renderDOM {
     setTimeout(() => { [taskSettingsDOM, sidebarBlur].forEach(element => element.setAttribute('style', 'display: none')) }, 1000);
   }
 
-  static closeFoldersSettingsView = e => {
+  static closeFoldersSettingsView = () => {
     [folderMenu, sidebarBlur].forEach(element => element.classList.remove('visible'));
     setTimeout(() => { [folderMenu, sidebarBlur].forEach(element => element.setAttribute('style', 'display: none')) }, 1000);
   }
@@ -335,8 +349,19 @@ document.addEventListener('click', e => {
   }
 
   // close folders sidebar
-  if (target.classList.contains('folders-menu-exit-btn') || (e.target.classList.contains('sidebar-blur'))) {
-    renderDOM.closeFoldersSettingsView(e);
+  if (target.classList.contains('folders-menu-exit-btn') || (target.classList.contains('sidebar-blur'))) {
+    renderDOM.closeFoldersSettingsView();
+  }
+
+  // select and render folder
+  if (target.parentElement == document.querySelector('.folders-list')) {
+    const folderIndex = target.getAttribute('folderIndex');
+    const previouslySelectedFolder =  document.querySelector('.selected-folder')
+    previouslySelectedFolder.classList.remove('selected-folder'); // remove selected-folder class from previously selected folder
+    target.classList.add('selected-folder');
+    renderDOM.renderFolder(allFolders[folderIndex]);
+    
+    renderDOM.closeFoldersSettingsView();
   }
 });
 
