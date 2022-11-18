@@ -32,9 +32,11 @@ export default class Folder {
     : new Task(`Task ${this.numOfTasks}`, this.determineTaskStatus(e), 'low', this.numOfTasks - 1);
     
     this.#tasks.push(task);
+    if (task.status == 'completed') {
+      task.setAllTodosTrue();
+    }
     const taskElements = renderDOM.createTaskElements(task, this.numOfTasks - 1);
     renderDOM.appendTaskElementsToDOM(task, taskElements);
-    const taskIndex = taskElements.getAttribute('id');
   };
 
   determineTaskStatus = e => {
