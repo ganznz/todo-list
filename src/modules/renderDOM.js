@@ -5,6 +5,8 @@ import { setAttributes } from "./helperFunctions";
 // -- ELEMENTS -- //
 const allContentContainer = document.querySelector('.all-content');
 const mainContentContainer = document.querySelector('.main-content-container');
+const header = document.querySelector('header');
+const headerh1 = header.querySelector('h1');
 const sidebarBlur = document.querySelector('.sidebar-blur');
 const folderMenu = document.querySelector('.folder-menu');
 const addFoldersBtn = document.querySelector('.add-folders');
@@ -46,6 +48,7 @@ export default class renderDOM {
       const taskElements = this.createTaskElements(folderObj.tasks[i], i);
       this.appendTaskElementsToDOM(folderObj.tasks[i], taskElements);
     }
+    headerh1.textContent = folderObj.name;
   }
 
   static chooseTaskIcon = () => {
@@ -132,7 +135,9 @@ export default class renderDOM {
     // add click event listeners to card task card
     taskElements.addEventListener('click', e => {
       if (e.target.classList.contains('task-delete-icon')) {
-        this.deleteTask(taskIndex, taskElements);
+        const folderIndex = folderMenu.querySelector('.selected-folder').getAttribute('folderindex');
+        const taskIndex = taskElements.getAttribute('id');
+        allFolders[folderIndex].deleteTask(taskIndex, taskElements);
         return;
       }
       renderDOM.showTaskSettingsView(task);
@@ -355,12 +360,17 @@ document.addEventListener('click', e => {
 
   // select and render folder
   if (target.parentElement == document.querySelector('.folders-list')) {
-    const folderIndex = target.getAttribute('folderIndex');
+    const folderIndex = target.getAttribute('folderindex');
+    const currentSelectedFolderIndex = document.querySelector('.selected-folder').getAttribute('folderindex');
+
+    // return out of function if user is trying to render the folder that is already in the viewport
+    if (folderIndex == currentSelectedFolderIndex) { return };
+
     const previouslySelectedFolder =  document.querySelector('.selected-folder')
     previouslySelectedFolder.classList.remove('selected-folder'); // remove selected-folder class from previously selected folder
     target.classList.add('selected-folder');
     renderDOM.renderFolder(allFolders[folderIndex]);
-    
+
     renderDOM.closeFoldersSettingsView();
   }
 });
