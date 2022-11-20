@@ -20,9 +20,7 @@ export default class Folder {
   get tasks() { return this.#tasks };
   get numOfTasks() { return this.#numOfTasks };
 
-  set name(value) {
-    
-  };
+  set name(value) { this.#name = value };
 
   createTask = (e) => {
     this.#numOfTasks++;

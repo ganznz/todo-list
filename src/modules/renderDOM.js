@@ -6,7 +6,7 @@ import { setAttributes } from "./helperFunctions";
 const allContentContainer = document.querySelector('.all-content');
 const mainContentContainer = document.querySelector('.main-content-container');
 const header = document.querySelector('header');
-const headerh1 = header.querySelector('h1');
+const headerInput = header.querySelector('input');
 const sidebarBlur = document.querySelector('.sidebar-blur');
 const folderMenu = document.querySelector('.folder-menu');
 const addFoldersBtn = document.querySelector('.add-folders');
@@ -30,6 +30,8 @@ export default class renderDOM {
   static addFolderToSidebar = (folderObj) => {
     const ul = folderMenu.querySelector('ul');
     const li = document.createElement('li');
+    const deleteIcon = document.createElement('i');
+    deleteIcon.classList.add('fa-solid', 'fa-trash-can', 'fa-lg',  'folder-delete-icon');
     li.setAttribute('folderindex', allFolders.length - 1)
     li.textContent = folderObj.name;
     if (allFolders.length > 1) {
@@ -37,7 +39,8 @@ export default class renderDOM {
       previouslySelected.classList.remove('selected-folder');
     }
     li.classList.add('selected-folder');
-    ul.appendChild(li)
+    li.appendChild(deleteIcon);
+    ul.appendChild(li);
   }
 
   static renderFolder = (folderObj) => {
@@ -48,7 +51,13 @@ export default class renderDOM {
       const taskElements = this.createTaskElements(folderObj.tasks[i], i);
       this.appendTaskElementsToDOM(folderObj.tasks[i], taskElements);
     }
-    headerh1.textContent = folderObj.name;
+    headerInput.setAttribute('value', folderObj.name);
+    headerInput.value = folderObj.name;
+  }
+
+  static changeFolderName = (e, folderObj) => {
+    folderObj.name = e.target.value;
+    return e.target.value;
   }
 
   static chooseTaskIcon = () => {
@@ -382,3 +391,12 @@ addFoldersBtn.addEventListener('click', e => {
   allFolders.push(folderObj);
   renderDOM.addFolderToSidebar(folderObj);
 });
+
+// change folder name
+headerInput.addEventListener('input', e => {
+  const selectedFolderElement = document.querySelector('.selected-folder');
+  const folderIndex = selectedFolderElement.getAttribute('folderindex');
+  const folderObj = allFolders[folderIndex];
+  const newFolderName = renderDOM.changeFolderName(e, folderObj);
+  selectedFolderElement.textContent = newFolderName;
+})

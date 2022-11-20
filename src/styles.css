@@ -20,9 +20,6 @@
   font-family: sans-serif;
 }
 
-body {
-}
-
 .all-content {
   background-color: white;
   padding: var(--main-padding);
@@ -64,10 +61,6 @@ svg > *{
   filter: drop-shadow(3px 0 5px rgba(0, 0, 0, 0.1));
 }
 
-/* .folder-menu > *:not(:last-child) {
-  margin-bottom: 30px;
-} */
-
 .folder-menu > *:not(.folders-list) {
   display: flex;
   margin: 5px calc(var(--main-padding) / 2);
@@ -78,8 +71,14 @@ svg > *{
 }
 
 .folder-menu .folders-list li {
+  display: flex;
+  justify-content: space-between;
   padding: 5px calc(var(--main-padding) / 2);
 }
+
+/* .folder-menu .folders-list .folder-delete-icon {
+  margin-left: auto;
+} */
 
 .folder-menu .folder-menu-header svg {
   margin-left: auto;
@@ -145,7 +144,8 @@ svg > *{
   color: var(--grey);
 }
 
-.task-settings .sidebar-title input {
+.task-settings .sidebar-title input,
+header > input {
   font-size: 1.4rem;
 }
 
@@ -157,15 +157,21 @@ svg > *{
 
 .task-settings .sidebar-title input,
 .task-settings .task-description textarea,
-.task-todos .form-checkbox-container input[type="text"] {
+.task-todos .form-checkbox-container input[type="text"],
+header > input {
   border: none;
   padding: 5px;
   border-radius: 6px;
   transition: all 0.1s;
 }
 
+header > input {
+  margin-bottom: 30px;
+}
+
 .task-settings .sidebar-title input:focus,
-.task-settings .task-main-info-section textarea:focus {
+.task-settings .task-main-info-section textarea:focus,
+header > input:focus {
   filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.2))
 }
 

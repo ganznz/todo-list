@@ -11,6 +11,8 @@ for (let i = 0; i < 4; i++) {
   allFolders.push(folderObj);
   renderDOM.addFolderToSidebar(folderObj);
 }
+// render last generated folder by default
+renderDOM.renderFolder(allFolders[allFolders.length - 1]);
 
 // add tasks
 const addTaskButtons = document.querySelectorAll('.add-tasks');
