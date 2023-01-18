@@ -1,111 +1,41 @@
-import renderDOM from "./renderDOM";
-import Todo from "./todo";
-
 export default class Task {
-  #name;
-  #status;
-  #priority;
-  #index
-  #dateCreated = new Date();
-  #dateDue = new Date();
-  #description = "Add a description for this task!";
-  #todos = [];
-  #numOfTodos = 0;
-  #icon = renderDOM.chooseTaskIcon();
-  
-  constructor(name, status, priority, index) {
-    this.#name = name;
-    this.#status = status.toLowerCase();
-    this.#priority = priority.toLowerCase();
-    this.#index = index;
-    this.#dateDue.setDate(this.#dateDue.getDate() + 1);
-    this.#dateDue.setHours(13, 0, 0); // sets initial due date to 1pm local time the next day
-    if (!(this.#numOfTodos)) { // create default todos
-      this.createTodo();
-      this.createTodo();
-      this.createTodo();
-    }
-  }
+    #name;
+    #status;
+    #priority;
+    #dateCreated = new Date();
+    #dateDue = new Date();
+    #description = "Add a description for this task!";
+    #todos = [];
+    #numOfTodos = 0;
 
-  get name() { return this.#name };
-  get status() { return this.#status };
-  get priority() { return this.#priority };
-  get index() { return this.#index };
-  get dateCreated() { return this.#dateCreated };
-  get dateDue() { return this.#dateDue };
-  get description() { return this.#description };
-  get todos() { return this.#todos };
-  get numOfTodos() { return this.#numOfTodos };
-  get icon() { return this.#icon };
-  
-  set name(value) { this.#name = value };
-  set status(value) { this.#status = value };
-  set priority(value) { this.#priority = value };
-  set dateDue(value) { this.#dateDue = value };
-  set description(value) { this.#description = value };
-
-  updateDateDue = () => {
-    const taskSettingsDateDue = document.querySelector('.task-date-due > input').value;
-
-    if (taskSettingsDateDue.length > 0) {
-      this.dateDue = new Date(taskSettingsDateDue);
-    } else {
-      const resetDate = new Date(this.dateCreated.getFullYear(), this.dateCreated.getMonth(), this.dateCreated.getDate() + 1);
-      resetDate.setHours(13, 0, 0);
-      this.dateDue = resetDate;
-    }
-  }
-
-  updateTodos = () => {
-    const taskTodos = document.querySelectorAll('.task-todos > form > div');
-    this.todos.forEach((todo, index) => {
-      const todoDescription = taskTodos[index].querySelector('input[type="text"]');
-      const todoCheckbox = todoDescription.parentElement.querySelector('input[type="checkbox"]');
-      todo.status = todoCheckbox.checked == true;
-      todo.description = todoDescription.value;
-    });
-  }
-
-  createTodo = () => {
-    this.#numOfTodos++;
-    // const todo = new Todo(`Todo ${this.numOfTodos}`);
-    const todo = new Todo('Add a description');
-    this.todos.push(todo);
-    renderDOM.createTodoElement(this, todo);
-  };
-
-  deleteTodo = (todoIndex, todoElements) => {
-    this.#numOfTodos--;
-    todoElements.remove();
-    this.todos.pop(todoIndex);
-    renderDOM.updateTodoIndexes(parseInt(todoIndex));
-  }
-
-  setAllTodosTrue = () => {
-    this.todos.forEach(todo => { todo.status = true });
-  }
-
-  setAllTodosFalse = () => {
-    this.todos.forEach(todo => { todo.status = false });
-  }
-
-  completeTask = () => {
-    const taskIndex = document.querySelector('.task-settings').getAttribute('taskindex');
-    const taskElements = document.getElementById(taskIndex);
-    if (this.isComplete()) {
-      this.status = 'completed';
-      renderDOM.closeTaskSettingsView();
-      renderDOM.appendTaskElementsToDOM(this, taskElements);
-      return
+    constructor(name, status, priority) {
+        this.#name = name;
+        this.#status = status;
+        this.#priority = priority;
     }
 
-    // if task not completed remove from completed tasks section
-    this.status = this.status == 'completed' ? 'upcoming' : (this.status == 'inprogress' ? 'inprogress' : 'upcoming');
-    renderDOM.closeTaskSettingsView();
-    renderDOM.appendTaskElementsToDOM(this, taskElements);
-  }
+    get name() { return this.#name };
+    get status() { return this.#status };
+    get priority() { return this.#priority };
+    get dateCreated() { return this.#dateCreated };
+    get dateDue() { return this.#dateDue };
+    get description() { return this.#description };
+    get todos() { return this.#todos };
+    get numOfTodos() { return this.#numOfTodos };
 
-  isComplete = () => {
-    return this.todos.every(todo => todo.status == true);
-  }
+    set name(value) { this.#name = value };
+    set status(value) { this.#status = value };
+    set priority(value) { this.#priority = value };
+    set dateDue(value) { this.#dateDue = value };
+    set description(value) { this.#description = value };
+
+    static determineTaskStatus = addTaskBtnEl => {
+        if (addTaskBtnEl.classList.contains('upcoming-tasks')) {
+            return 'upcoming';
+        } else if (addTaskBtnEl.classList.contains('inprogress-tasks')) {
+            return 'inprogress';
+        } else {
+            return 'completed';
+        }
+    }
 };
