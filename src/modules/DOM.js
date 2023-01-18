@@ -1,5 +1,6 @@
 import { iterateEventOverNodeList } from './helperFunctions';
 import Folder from './taskFolder';
+import { formatDistance } from 'date-fns';
 
 const upcomingTasksContainer = document.querySelector('.tasks-container.upcoming-tasks');
 const inprogressTasksContainer = document.querySelector('.tasks-container.inprogress-tasks');
@@ -11,8 +12,6 @@ export default class DOM {
     static createTaskElements = task => {
         const taskContainer = document.createElement('div');
         taskContainer.classList.add('task');
-        taskContainer.setAttribute('task-obj', task);
-        console.log(taskContainer.getAttribute('task-obj'));
 
         const taskInfoContainer = document.createElement('div');
         taskInfoContainer.classList.add('task-info-container');
@@ -21,8 +20,7 @@ export default class DOM {
         h3.textContent = task.name;
 
         const p = document.createElement('p');
-        // p.textContent = `Due in ${formatDistance(task.dateCreated, task.dateDue)}`;
-        p.textContent = `Due in --`;
+        p.textContent = `Due in ${formatDistance(task.dateCreated, task.dateDue)}`;
 
         const priorityLabel = document.createElement('div');
         priorityLabel.classList.add('priority-label', task.priority);
