@@ -24,7 +24,7 @@ export default class Folder {
     
     decrementTasksNum = () => this.#numOfTasks--;
 
-    appendToTasksObj = (taskObj, id) => this.#tasks[id] = taskObj;
+    appendToTasksObj = taskObj => this.#tasks[taskObj.name] = taskObj;
 
     createTask = (e = null) => {
         this.incrementTasksNum();
@@ -37,7 +37,6 @@ export default class Folder {
         ? DOM.appendTaskElementsToDOM(e.target.parentNode.querySelector('.tasks-container'), taskElements)
         : DOM.appendTaskElementsToDOM(document.querySelector('.tasks-container.upcoming-tasks'), taskElements);
 
-        this.appendToTasksObj(taskObj, this.numOfTasks);
-        console.log(this.#tasks[this.numOfTasks]);
+        this.appendToTasksObj(taskObj);
     }
 }

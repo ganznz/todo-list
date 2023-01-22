@@ -2,10 +2,13 @@ import { iterateEventOverNodeList } from './helperFunctions';
 import Folder from './taskFolder';
 import { formatDistance } from 'date-fns';
 
+// -- ELEMENTS -- //
 const upcomingTasksContainer = document.querySelector('.tasks-container.upcoming-tasks');
 const inprogressTasksContainer = document.querySelector('.tasks-container.inprogress-tasks');
 const completedTasksContainer = document.querySelector('.tasks-container.completed-tasks');
 const addTaskBtns = document.querySelectorAll('.tasks-section > .add-btn');
+const sidebarBlur = document.querySelector('.sidebar-blur');
+const taskSettings = document.querySelector('.task-settings');
 
 export default class DOM {
 
@@ -39,6 +42,10 @@ export default class DOM {
     }
 
     static appendTaskElementsToDOM = (tasksContainer, taskElements) => tasksContainer.appendChild(taskElements);
+
+    static toggleTaskSettingsView = task => {
+        
+    }
 }
 
 const folder = new Folder()
