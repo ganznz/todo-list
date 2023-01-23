@@ -41,14 +41,54 @@ export default class DOM {
         return taskContainer;
     }
 
-    static appendTaskElementsToDOM = (tasksContainer, taskElements) => tasksContainer.appendChild(taskElements);
+    static appendTaskElementsToDOM = (tasksContainer, taskElements) => {
+        tasksContainer.appendChild(taskElements);
+        DOM.applyTaskElementEventListeners(taskElements);
 
-    static toggleTaskSettingsView = task => {
-        
+    };
+
+    static applyTaskElementEventListeners = taskElements => {
+        const taskCard = taskElements;
+
+        taskCard.addEventListener('click', e => {
+            if (e.target.classList.contains('task-delete-icon')) {
+                // delete task
+                return;
+            }
+            DOM.openTaskSettings(taskElements);
+        })
+    }
+
+    static openTaskSettings = task => {
+        [sidebarBlur, taskSettings].forEach(element => {
+            element.setAttribute('style', 'display: flex');
+            element.classList.add('visible');
+        });
+    }
+
+    static closeTaskSettings = task => {
+        [sidebarBlur, taskSettings].forEach(element => {
+            element.classList.remove('visible');
+            element.setAttribute('style', 'display: none');
+        });
+
     }
 }
 
-const folder = new Folder()
+const folder = new Folder();
 
 iterateEventOverNodeList(addTaskBtns, 'click', folder.createTask);
+
+
+
+document.addEventListener('click', e => {
+
+    // when sidebar blur gets clicked
+    if (e.target == sidebarBlur) {
+        if (taskSettings.getAttribute('style') == 'display: flex') {
+            DOM.closeTaskSettings();
+        }
+        return;
+    }
+})
 

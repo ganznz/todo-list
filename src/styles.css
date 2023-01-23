@@ -345,7 +345,6 @@ header > input:focus {
   background-color: #87dd7f;
   opacity: 0;
   display: none;
-  transition: all 1s;
 }
 
 .sidebar-blur.visible {

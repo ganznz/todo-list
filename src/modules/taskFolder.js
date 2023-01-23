@@ -1,6 +1,8 @@
 import DOM from './DOM';
 import Task from './task';
 
+export const allFolders = {};
+
 export default class Folder {
     #name = `Folder`;
     #tasks = {};
@@ -31,7 +33,7 @@ export default class Folder {
         const taskStatus = e ? Task.determineTaskStatus(e.target) : 'upcoming';
         const taskObj = new Task(`Task ${this.numOfTasks}`, taskStatus, 'low');
         const taskElements = DOM.createTaskElements(taskObj);
-        taskElements.setAttribute('id', this.numOfTasks);
+        taskElements.setAttribute('task-name', taskObj.name);
 
         e 
         ? DOM.appendTaskElementsToDOM(e.target.parentNode.querySelector('.tasks-container'), taskElements)
