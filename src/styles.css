@@ -244,6 +244,30 @@ header > input:focus {
   transition: all 0.2s;
 }
 
+.task-settings .task-status > h5.upcoming:before {
+  content: 'Upcoming';
+}
+
+.task-settings .task-status > h5.inprogress:before {
+  content: 'In Progress';
+}
+
+.task-settings .task-status > h5.completed:before {
+  content: 'Completed';
+}
+
+.task-settings .task-priority > h5.low:before {
+  content: 'Low';
+}
+
+.task-settings .task-priority > h5.medium:before {
+  content: 'Medium';
+}
+
+.task-settings .task-priority > h5.high:before {
+  content: 'High';
+}
+
 .task-settings .task-main-info-section h2 {
   font-weight: 400;
   margin-bottom: 10px;

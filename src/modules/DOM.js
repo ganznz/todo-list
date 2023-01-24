@@ -164,12 +164,14 @@ document.addEventListener('click', e => {
 
         // update task object
         const taskSettingsInfo = DOM.getTaskSettingsInfo();
-        const taskObject = folder.tasks[taskSettings.getAttribute('selected-task')];
+        const taskObject = folder.tasks[taskSettings.getAttribute('selected-task')]
+        const oldTaskStatus = taskObject.status;
         taskObject.updateTask(folder, taskSettingsInfo);
+        const newTaskStatus = taskObject.status;
 
-        
-
-        DOM.recreateTaskElements(taskObject, taskSettingsInfo.oldTaskName);
+        oldTaskStatus == newTaskStatus
+        ? DOM.updateTaskElements(taskObject, taskSettingsInfo.oldTaskName)
+        : DOM.recreateTaskElements(taskObject, taskSettingsInfo.oldTaskName);
     }
 
     // sidebar blur clicked on
@@ -190,5 +192,11 @@ document.addEventListener('click', e => {
         }
         return;
     }
+
+    // task settings sidebar task status container clicked on
+    if (e.target == taskSettingsTaskStatusContainer) {
+        DOM.toggleSettingsSidebarTaskStatuses();
+    }
 })
 
+DOM.initiateDragula();
