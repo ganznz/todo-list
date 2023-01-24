@@ -29,6 +29,18 @@ export default class Task {
     set dateDue(value) { this.#dateDue = value };
     set description(value) { this.#description = value };
 
+    updateTask = (parentFolder, taskSettingsInfo) => {
+        const taskObject = parentFolder.tasks[taskSettingsInfo.oldTaskName];
+        taskObject.name = taskSettingsInfo.taskName;
+        taskObject.status = taskSettingsInfo.taskStatus;
+        taskObject.priority = taskSettingsInfo.taskPriority;
+        taskObject.dateDue = new Date(taskSettingsInfo.taskDueDate);
+        taskObject.description = taskSettingsInfo.taskDescription;
+        
+        delete parentFolder.tasks[taskSettingsInfo.oldTaskName];
+        parentFolder.tasks[taskObject.name] = taskObject;
+    }
+
     static determineTaskStatus = addTaskBtnEl => {
         if (addTaskBtnEl.classList.contains('upcoming-tasks')) {
             return 'upcoming';
