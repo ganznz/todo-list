@@ -1,6 +1,7 @@
 import { iterateEventOverNodeList } from './helperFunctions';
 import Folder from './taskFolder';
 import { format, formatDistance } from 'date-fns';
+import dragula from 'dragula';
 
 // -- ELEMENTS -- //
 const upcomingTasksContainer = document.querySelector('.tasks-container.upcoming-tasks');
@@ -47,6 +48,17 @@ export default class DOM {
         taskContainer.appendChild(deleteIcon);
 
         return taskContainer;
+    }
+
+    static determineTasksContainer = task => {
+        switch (task.status) {
+            case 'upcoming':
+                return upcomingTasksContainer;
+            case 'inprogress':
+                return inprogressTasksContainer;
+            case 'completed':
+                return completedTasksContainer;
+        };
     }
 
     static appendTaskElementsToDOM = (tasksContainer, taskElements) => {
@@ -110,12 +122,32 @@ export default class DOM {
         `Overdue by ${formatDistance(new Date(), taskObj.dateDue)}!`;
     }
 
+    static recreateTaskElements = (taskObj, oldTaskName) => {
+        // delete old task elements
+        const oldTaskElements = document.querySelector(`[task-name="${oldTaskName}"]`);
+        oldTaskElements.remove();
+
+        // create new task elements
+        const taskElements = DOM.createTaskElements(taskObj);
+        taskElements.setAttribute('task-name', taskObj.name);
+        const taskInfoContainer = taskElements.querySelector('.task-info-container');
+        taskInfoContainer.querySelector('h3').textContent = taskObj.name;
+        taskInfoContainer.querySelector('p').textContent = DOM.updateTaskElementsDueDateDescription(taskObj);
+        DOM.appendTaskElementsToDOM(DOM.determineTasksContainer(taskObj), taskElements);
+
+    }
+
     static updateTaskElements = (taskObj, oldTaskName) => {
         const taskElements = document.querySelector(`[task-name="${oldTaskName}"]`);
         taskElements.setAttribute('task-name', taskObj.name);
         const taskInfoContainer = taskElements.querySelector('.task-info-container');
         taskInfoContainer.querySelector('h3').textContent = taskObj.name;
         taskInfoContainer.querySelector('p').textContent = DOM.updateTaskElementsDueDateDescription(taskObj);
+    }
+
+    static initiateDragula = () => {
+        const containers = [upcomingTasksContainer, inprogressTasksContainer, completedTasksContainer]
+        dragula(containers);
     }
 }
 
@@ -126,7 +158,6 @@ iterateEventOverNodeList(addTaskBtns, 'click', folder.createTask);
 
 
 document.addEventListener('click', e => {
-
     // task settings exit button clicked on
     if (e.target.classList.contains('task-settings-exit-btn')) {
         DOM.closeTaskSettings();
@@ -135,7 +166,10 @@ document.addEventListener('click', e => {
         const taskSettingsInfo = DOM.getTaskSettingsInfo();
         const taskObject = folder.tasks[taskSettings.getAttribute('selected-task')];
         taskObject.updateTask(folder, taskSettingsInfo);
-        DOM.updateTaskElements(taskObject, taskSettingsInfo.oldTaskName);
+
+        
+
+        DOM.recreateTaskElements(taskObject, taskSettingsInfo.oldTaskName);
     }
 
     // sidebar blur clicked on
@@ -145,9 +179,14 @@ document.addEventListener('click', e => {
             
             // update task object
             const taskSettingsInfo = DOM.getTaskSettingsInfo();
-            const taskObject = folder.tasks[taskSettings.getAttribute('selected-task')];
+            const taskObject = folder.tasks[taskSettings.getAttribute('selected-task')]
+            const oldTaskStatus = taskObject.status;
             taskObject.updateTask(folder, taskSettingsInfo);
-            DOM.updateTaskElements(taskObject, taskSettingsInfo.oldTaskName);
+            const newTaskStatus = taskObject.status;
+
+            oldTaskStatus == newTaskStatus
+            ? DOM.updateTaskElements(taskObject, taskSettingsInfo.oldTaskName)
+            : DOM.recreateTaskElements(taskObject, taskSettingsInfo.oldTaskName);
         }
         return;
     }
