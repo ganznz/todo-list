@@ -1,17 +1,25 @@
+import Todo from './todo';
+
 export default class Task {
     #name;
     #status;
     #priority;
     #dateCreated = new Date();
     #dateDue = new Date();
-    #description = "Add a description for this task!";
-    #todos = [];
+    #description = 'Add a description for this task!';
+    #todos = {};
     #numOfTodos = 0;
 
     constructor(name, status, priority) {
         this.#name = name;
         this.#status = status;
         this.#priority = priority;
+
+        if (!(this.numOfTodos)) {
+            this.createTodo();
+            this.createTodo();
+            this.createTodo();
+        }
     }
 
     get name() { return this.#name };
@@ -39,6 +47,18 @@ export default class Task {
         
         delete parentFolder.tasks[taskSettingsInfo.oldTaskName];
         parentFolder.tasks[taskObject.name] = taskObject;
+    }
+
+    incrementTodosNum = () => this.#numOfTodos++;
+
+    decrementTodosNum = () => this.#numOfTodos--;
+
+    appendToTodosObject = todoObj => this.#todos[todoObj.description] = todoObj;
+
+    createTodo = () => {
+        this.incrementTodosNum();
+        const todoObj = new Todo(`Todo ${this.numOfTodos}`);
+        this.appendToTodosObject(todoObj);
     }
 
     static determineTaskStatus = addTaskBtnEl => {

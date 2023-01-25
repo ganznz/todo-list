@@ -1,4 +1,5 @@
-import { iterateEventOverNodeList } from './helperFunctions';
+import { iterateEventOverNodeList, setAttributes } from './helperFunctions';
+import Task from './task';
 import Folder from './taskFolder';
 import { format, formatDistance } from 'date-fns';
 import dragula from 'dragula';
@@ -17,9 +18,34 @@ const taskSettingsTaskPriorityContainer = taskSettings.querySelector('.task-prio
 const taskSettingsTaskDateCreatedContainer = taskSettings.querySelector('.task-date-created');
 const taskSettingsTaskDateDueContainer = taskSettings.querySelector('.task-date-due');
 const taskSettingsTaskDescription = taskSettings.querySelector('.task-description > textarea');
+const taskSettingsTodoForm = taskSettings.querySelector('.task-todos > form');
+const taskSettingsTodoAddBtn = taskSettings.querySelector('.add-todos');
 
 
 export default class DOM {
+
+    static createTodoElements = todoObj => {
+        const todoContainer = document.createElement('div');
+        todoContainer.className = 'form-checkbox-container';
+        todoContainer.setAttribute('todo-description', todoObj.description);
+
+        const checkboxInput = document.createElement('input');
+        setAttributes(checkboxInput, { 'id':todoObj.description, 'type':'checkbox', 'required':'' });
+
+        const checkboxDescriptionInput = document.createElement('input');
+        setAttributes(checkboxDescriptionInput, {'type':'text', 'for':todoObj.description});
+        checkboxDescriptionInput.value = todoObj.description;
+
+        const deleteIcon = document.createElement('i');
+        deleteIcon.classList.add('fa-solid', 'fa-square-minus', 'fa-xl');
+
+        todoContainer.appendChild(checkboxInput);
+        todoContainer.appendChild(checkboxDescriptionInput);
+        todoContainer.appendChild(deleteIcon);
+        return todoContainer;
+    }
+
+    static clearTaskSettingsTodoElements = () => taskSettingsTodoForm.querySelectorAll('div').forEach(element => element.remove());
 
     static createTaskElements = task => {
         const taskContainer = document.createElement('div');
@@ -95,14 +121,23 @@ export default class DOM {
 
     }
 
-    static populateTaskSettingsWithTaskInfo = task => {
-        taskSettings.setAttribute('selected-task', task.name);
-        taskSettingsName.value = task.name;
-        taskSettingsTaskStatusContainer.querySelector('h5').className = task.status;
-        taskSettingsTaskPriorityContainer.querySelector('h5').className = task.priority;
-        taskSettingsTaskDateCreatedContainer.querySelector('h5').textContent = `${format(task.dateCreated, 'PP')} ${format(task.dateCreated, 'p')}`;
-        taskSettingsTaskDateDueContainer.querySelector('input').value = `${format(task.dateDue, 'y')}-${format(task.dateDue, 'MM')}-${format(task.dateDue, 'dd')}`;
-        taskSettingsTaskDescription.value = task.description;
+    static populateTaskSettingsTodoForm = taskObj => {
+        DOM.clearTaskSettingsTodoElements();
+        for (const todo in taskObj.todos) {
+            const todoElements = DOM.createTodoElements(taskObj.todos[todo])
+            taskSettingsTodoForm.insertBefore(todoElements, taskSettingsTodoAddBtn);
+        }
+    }
+
+    static populateTaskSettingsWithTaskInfo = taskObj => {
+        taskSettings.setAttribute('selected-task', taskObj.name);
+        taskSettingsName.value = taskObj.name;
+        taskSettingsTaskStatusContainer.querySelector('h5').className = taskObj.status;
+        taskSettingsTaskPriorityContainer.querySelector('h5').className = taskObj.priority;
+        taskSettingsTaskDateCreatedContainer.querySelector('h5').textContent = `${format(taskObj.dateCreated, 'PP')} ${format(taskObj.dateCreated, 'p')}`;
+        taskSettingsTaskDateDueContainer.querySelector('input').value = `${format(taskObj.dateDue, 'y')}-${format(taskObj.dateDue, 'MM')}-${format(taskObj.dateDue, 'dd')}`;
+        taskSettingsTaskDescription.value = taskObj.description;
+        DOM.populateTaskSettingsTodoForm(taskObj);
     }
 
     static getTaskSettingsInfo = () => {
@@ -143,11 +178,31 @@ export default class DOM {
         const taskInfoContainer = taskElements.querySelector('.task-info-container');
         taskInfoContainer.querySelector('h3').textContent = taskObj.name;
         taskInfoContainer.querySelector('p').textContent = DOM.updateTaskElementsDueDateDescription(taskObj);
+        taskInfoContainer.querySelector('.priority-label').className = `priority-label ${taskObj.priority}`
     }
 
     static initiateDragula = () => {
         const containers = [upcomingTasksContainer, inprogressTasksContainer, completedTasksContainer]
-        dragula(containers);
+        
+        dragula(containers)
+        
+        // update tasks status when dropped into task container 
+        .on('drop', (taskElements, taskContainer) => {
+            const taskObject = folder.tasks[taskElements.getAttribute('task-name')];
+            taskObject.status = Task.determineTaskStatus(taskContainer);
+        })
+    }
+
+    static toggleSettingsSidebarTaskStatuses = () => {
+        const statusText = taskSettingsTaskStatusContainer.querySelector('h5');
+        const statuses = ['upcoming', 'inprogress', 'completed'];
+        statusText.className = statuses[(statuses.indexOf(statusText.className) + 1) % statuses.length];
+    }
+
+    static toggleSettingsSidebarTaskPriorities = () => {
+        const prioritiesText = taskSettingsTaskPriorityContainer.querySelector('h5');
+        const priorities = ['low', 'medium', 'high'];
+        prioritiesText.className = priorities[(priorities.indexOf(prioritiesText.className) + 1) % priorities.length];
     }
 }
 
@@ -160,28 +215,13 @@ iterateEventOverNodeList(addTaskBtns, 'click', folder.createTask);
 document.addEventListener('click', e => {
     // task settings exit button clicked on
     if (e.target.classList.contains('task-settings-exit-btn')) {
-        DOM.closeTaskSettings();
-
-        // update task object
+        
         const taskSettingsInfo = DOM.getTaskSettingsInfo();
-        const taskObject = folder.tasks[taskSettings.getAttribute('selected-task')]
-        const oldTaskStatus = taskObject.status;
-        taskObject.updateTask(folder, taskSettingsInfo);
-        const newTaskStatus = taskObject.status;
-
-        oldTaskStatus == newTaskStatus
-        ? DOM.updateTaskElements(taskObject, taskSettingsInfo.oldTaskName)
-        : DOM.recreateTaskElements(taskObject, taskSettingsInfo.oldTaskName);
-    }
-
-    // sidebar blur clicked on
-    if (e.target == sidebarBlur) {
-        if (taskSettings.getAttribute('style') == 'display: flex') {
+        const taskObject = folder.tasks[taskSettings.getAttribute('selected-task')];
+        
+        // update task object
+        if (!(folder.taskNameAlreadyExists(taskSettingsInfo.taskName, taskSettingsInfo.oldTaskName))) {
             DOM.closeTaskSettings();
-            
-            // update task object
-            const taskSettingsInfo = DOM.getTaskSettingsInfo();
-            const taskObject = folder.tasks[taskSettings.getAttribute('selected-task')]
             const oldTaskStatus = taskObject.status;
             taskObject.updateTask(folder, taskSettingsInfo);
             const newTaskStatus = taskObject.status;
@@ -189,6 +229,31 @@ document.addEventListener('click', e => {
             oldTaskStatus == newTaskStatus
             ? DOM.updateTaskElements(taskObject, taskSettingsInfo.oldTaskName)
             : DOM.recreateTaskElements(taskObject, taskSettingsInfo.oldTaskName);
+        } else {
+            console.log('cannot update task');
+        }
+    }
+
+    // sidebar blur clicked on
+    if (e.target == sidebarBlur) {
+        if (taskSettings.getAttribute('style') == 'display: flex') {
+            
+            const taskSettingsInfo = DOM.getTaskSettingsInfo();
+            const taskObject = folder.tasks[taskSettings.getAttribute('selected-task')];
+            
+            // update task object
+            if (!(folder.taskNameAlreadyExists(taskSettingsInfo.taskName, taskSettingsInfo.oldTaskName))) {
+                DOM.closeTaskSettings();
+                const oldTaskStatus = taskObject.status;
+                taskObject.updateTask(folder, taskSettingsInfo);
+                const newTaskStatus = taskObject.status;
+    
+                oldTaskStatus == newTaskStatus
+                ? DOM.updateTaskElements(taskObject, taskSettingsInfo.oldTaskName)
+                : DOM.recreateTaskElements(taskObject, taskSettingsInfo.oldTaskName);
+            } else {
+                console.log('cannot update task');
+            }
         }
         return;
     }
@@ -196,6 +261,19 @@ document.addEventListener('click', e => {
     // task settings sidebar task status container clicked on
     if (e.target == taskSettingsTaskStatusContainer) {
         DOM.toggleSettingsSidebarTaskStatuses();
+    }
+
+    // task settings sidebar task priority container clicked on
+    if (e.target == taskSettingsTaskPriorityContainer) {
+        DOM.toggleSettingsSidebarTaskPriorities();
+    }
+
+    // delete task when task elements delete icon clicked on
+    if (e.target.classList.contains('task-delete-icon')) {
+        folder.decrementTasksNum();
+        const taskElements = e.target.parentNode;
+        delete folder.tasks[taskElements.getAttribute('task-name')];
+        taskElements.remove();
     }
 })
 

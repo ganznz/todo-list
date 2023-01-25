@@ -28,10 +28,24 @@ export default class Folder {
 
     appendToTasksObj = taskObj => this.#tasks[taskObj.name] = taskObj;
 
+    generateTaskName = () => {
+        const exampleTaskNames = ["Workout", "Call clients", "Chores", "Do homework", "Deep work", "Touch grass",
+        "Meal prep", "Watch TV shows", "Maintain snap streaks (bruh)", "Doctor appointment", "Organise social activity",
+        "Clean room", "Buy groceries", "Read book", "Organise finances", "Work on project", "Record podcast",
+        "Play game with friends", "Meditate"];
+        
+        const unusedTaskNames = exampleTaskNames.filter(taskName => !(taskName in this.tasks));
+        console.log(unusedTaskNames);
+
+        return unusedTaskNames[Math.floor(Math.random() * unusedTaskNames.length)]
+
+    }
+
     createTask = (e = null) => {
         this.incrementTasksNum();
         const taskStatus = e ? Task.determineTaskStatus(e.target) : 'upcoming';
-        const taskObj = new Task(`Task ${this.numOfTasks}`, taskStatus, 'low');
+        const taskObj = new Task(this.generateTaskName(), taskStatus, 'low')
+        
         const taskElements = DOM.createTaskElements(taskObj);
         taskElements.setAttribute('task-name', taskObj.name);
 
@@ -41,4 +55,6 @@ export default class Folder {
 
         this.appendToTasksObj(taskObj);
     }
+
+    taskNameAlreadyExists = (newTaskName, oldTaskName) => newTaskName in this.tasks && newTaskName != oldTaskName;
 }

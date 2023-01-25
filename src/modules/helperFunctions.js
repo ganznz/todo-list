@@ -3,3 +3,9 @@ export const iterateEventOverNodeList = (list, event, fn) => {
         list[i].addEventListener(event, fn);
     }
 }
+
+export const setAttributes = (element, attributes) => {
+    for (const key in attributes) {
+        element.setAttribute(key, attributes[key]);
+    }
+}
