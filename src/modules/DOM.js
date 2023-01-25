@@ -12,7 +12,8 @@ const addTaskBtns = document.querySelectorAll('.tasks-section > .add-btn');
 const sidebarBlur = document.querySelector('.sidebar-blur');
 
 const taskSettings = document.querySelector('.task-settings');
-const taskSettingsName = taskSettings.querySelector('.sidebar-title > input');
+const taskSettingsName = taskSettings.querySelector('.sidebar-title input');
+const taskUpdateErrorMsg = taskSettings.querySelector('.task-update-error-msg');
 const taskSettingsTaskStatusContainer = taskSettings.querySelector('.task-status');
 const taskSettingsTaskPriorityContainer = taskSettings.querySelector('.task-priority');
 const taskSettingsTaskDateCreatedContainer = taskSettings.querySelector('.task-date-created');
@@ -204,6 +205,13 @@ export default class DOM {
         const priorities = ['low', 'medium', 'high'];
         prioritiesText.className = priorities[(priorities.indexOf(prioritiesText.className) + 1) % priorities.length];
     }
+
+    static showTaskUpdatingErrorMsg = () => {
+        taskUpdateErrorMsg.classList.add('active');
+        setTimeout(() => {
+            taskUpdateErrorMsg.classList.remove('active'); 
+        }, 2000);
+    }
 }
 
 const folder = new Folder();
@@ -230,7 +238,7 @@ document.addEventListener('click', e => {
             ? DOM.updateTaskElements(taskObject, taskSettingsInfo.oldTaskName)
             : DOM.recreateTaskElements(taskObject, taskSettingsInfo.oldTaskName);
         } else {
-            console.log('cannot update task');
+            DOM.showTaskUpdatingErrorMsg();
         }
     }
 
@@ -252,7 +260,7 @@ document.addEventListener('click', e => {
                 ? DOM.updateTaskElements(taskObject, taskSettingsInfo.oldTaskName)
                 : DOM.recreateTaskElements(taskObject, taskSettingsInfo.oldTaskName);
             } else {
-                console.log('cannot update task');
+                DOM.showTaskUpdatingErrorMsg();
             }
         }
         return;

@@ -133,8 +133,14 @@ svg > *{
 
 .task-settings .sidebar-title {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 20px;
+}
+
+.task-settings .sidebar-title .task-minor-info-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-size: 1.4rem;
 }
 
@@ -316,9 +322,23 @@ header > input:focus {
   transition: all 0.1s;
 }
 
-.task-settings .sidebar-title > svg:last-child {
+.task-settings .sidebar-title svg:last-child {
   color: var(--priority-red);
   margin-left: auto;
+}
+
+.task-settings .sidebar-title .task-update-error-msg {
+  text-align: center;
+  color: var(--priority-red);
+  font-weight: 700;
+  opacity: 0;
+  height: 0px;
+  transition: all 0.5s;
+}
+
+.task-settings .sidebar-title .task-update-error-msg.active {
+  height: 20px;
+  opacity: 1;
 }
 
 .task-settings .task-description textarea {
@@ -470,13 +490,13 @@ main {
 }
 
 .task .fa-trash-can,
-.task-settings .sidebar-title > svg:last-child {
+.task-settings .sidebar-title svg:last-child {
   transition: all 0.2s;
   margin-left: auto;
 }
 
 .task .fa-trash-can:hover,
-.task-settings .sidebar-title > svg:last-child:hover {
+.task-settings .sidebar-title svg:last-child:hover {
   color: var(--priority-red);
   transform: rotate(-10deg);
 }

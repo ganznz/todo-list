@@ -35,7 +35,6 @@ export default class Folder {
         "Play game with friends", "Meditate"];
         
         const unusedTaskNames = exampleTaskNames.filter(taskName => !(taskName in this.tasks));
-        console.log(unusedTaskNames);
 
         return unusedTaskNames[Math.floor(Math.random() * unusedTaskNames.length)]
 
