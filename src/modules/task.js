@@ -9,6 +9,7 @@ export default class Task {
     #description = 'Add a description for this task!';
     #todos = {};
     #numOfTodos = 0;
+    #currentTodoIndex = 0;
 
     constructor(name, status, priority) {
         this.#name = name;
@@ -53,12 +54,23 @@ export default class Task {
 
     decrementTodosNum = () => this.#numOfTodos--;
 
-    appendToTodosObject = todoObj => this.#todos[todoObj.description] = todoObj;
+    incrementTodosIndex = () => this.#currentTodoIndex++;
+
+    appendToTodosObject = todoObj => this.#todos[this.#currentTodoIndex] = todoObj;
 
     createTodo = () => {
         this.incrementTodosNum();
-        const todoObj = new Todo(`Todo ${this.numOfTodos}`);
+        this.incrementTodosIndex();
+        const todoObj = new Todo(`Add info to this Todo...`, this.#currentTodoIndex);
         this.appendToTodosObject(todoObj);
+        return todoObj;
+    }
+
+    deleteTodo = todoIndex => {
+        this.decrementTodosNum();
+        const todoElements = document.querySelector(`[todo-index="${todoIndex}"]`);
+        delete this.todos[todoElements.getAttribute('todo-index')];
+        todoElements.remove();
     }
 
     static determineTaskStatus = addTaskBtnEl => {

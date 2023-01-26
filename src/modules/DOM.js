@@ -28,7 +28,7 @@ export default class DOM {
     static createTodoElements = todoObj => {
         const todoContainer = document.createElement('div');
         todoContainer.className = 'form-checkbox-container';
-        todoContainer.setAttribute('todo-description', todoObj.description);
+        todoContainer.setAttribute('todo-index', todoObj.index);
 
         const checkboxInput = document.createElement('input');
         setAttributes(checkboxInput, { 'id':todoObj.description, 'type':'checkbox', 'required':'' });
@@ -38,7 +38,7 @@ export default class DOM {
         checkboxDescriptionInput.value = todoObj.description;
 
         const deleteIcon = document.createElement('i');
-        deleteIcon.classList.add('fa-solid', 'fa-square-minus', 'fa-xl');
+        deleteIcon.classList.add('fa-solid', 'fa-square-minus', 'fa-xl', 'todo-delete-icon');
 
         todoContainer.appendChild(checkboxInput);
         todoContainer.appendChild(checkboxDescriptionInput);
@@ -125,7 +125,7 @@ export default class DOM {
     static populateTaskSettingsTodoForm = taskObj => {
         DOM.clearTaskSettingsTodoElements();
         for (const todo in taskObj.todos) {
-            const todoElements = DOM.createTodoElements(taskObj.todos[todo])
+            const todoElements = DOM.createTodoElements(taskObj.todos[todo]);
             taskSettingsTodoForm.insertBefore(todoElements, taskSettingsTodoAddBtn);
         }
     }
@@ -207,10 +207,12 @@ export default class DOM {
     }
 
     static showTaskUpdatingErrorMsg = () => {
-        taskUpdateErrorMsg.classList.add('active');
-        setTimeout(() => {
-            taskUpdateErrorMsg.classList.remove('active'); 
-        }, 2000);
+        if (!(taskUpdateErrorMsg.classList.contains('active'))) {
+            taskUpdateErrorMsg.classList.add('active');
+            setTimeout(() => {
+                taskUpdateErrorMsg.classList.remove('active'); 
+            }, 2000);
+        }
     }
 }
 
@@ -282,6 +284,21 @@ document.addEventListener('click', e => {
         const taskElements = e.target.parentNode;
         delete folder.tasks[taskElements.getAttribute('task-name')];
         taskElements.remove();
+    }
+
+    // add todos to task when todo add btn clicked on
+    if (e.target == taskSettingsTodoAddBtn) {
+        const taskObj = folder.tasks[taskSettings.getAttribute('selected-task')];
+        const newTodoObj = taskObj.createTodo();
+        const todoElements = DOM.createTodoElements(newTodoObj);
+        taskSettingsTodoForm.insertBefore(todoElements, taskSettingsTodoAddBtn);
+    }
+
+    // delete todos when todo delete icon clicked on
+    if (e.target.classList.contains('todo-delete-icon')) {
+        const taskObj = folder.tasks[taskSettings.getAttribute('selected-task')];
+        const todoIndex = e.target.parentNode.getAttribute('todo-index');
+        taskObj.deleteTodo(todoIndex);
     }
 })
 

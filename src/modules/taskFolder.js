@@ -32,7 +32,7 @@ export default class Folder {
         const exampleTaskNames = ["Workout", "Call clients", "Chores", "Do homework", "Deep work", "Touch grass",
         "Meal prep", "Watch TV shows", "Maintain snap streaks (bruh)", "Doctor appointment", "Organise social activity",
         "Clean room", "Buy groceries", "Read book", "Organise finances", "Work on project", "Record podcast",
-        "Play game with friends", "Meditate"];
+        "Play game with friends", "Meditate", "Get bitches"];
         
         const unusedTaskNames = exampleTaskNames.filter(taskName => !(taskName in this.tasks));
 
