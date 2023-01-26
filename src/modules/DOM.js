@@ -31,6 +31,7 @@ export default class DOM {
         todoContainer.setAttribute('todo-index', todoObj.index);
 
         const checkboxInput = document.createElement('input');
+        checkboxInput.checked = todoObj.status;
         setAttributes(checkboxInput, { 'id':todoObj.description, 'type':'checkbox', 'required':'' });
 
         const checkboxDescriptionInput = document.createElement('input');
@@ -148,7 +149,7 @@ export default class DOM {
             taskStatus: taskSettingsTaskStatusContainer.querySelector('h5').className,
             taskPriority: taskSettingsTaskPriorityContainer.querySelector('h5').className,
             taskDueDate: taskSettingsTaskDateDueContainer.querySelector('input').value,
-            taskDescription: taskSettingsTaskDescription.value
+            taskDescription: taskSettingsTaskDescription.value,
         };
     }
 
@@ -234,6 +235,7 @@ document.addEventListener('click', e => {
             DOM.closeTaskSettings();
             const oldTaskStatus = taskObject.status;
             taskObject.updateTask(folder, taskSettingsInfo);
+            taskObject.updateTaskTodos(taskSettingsTodoForm.querySelectorAll('.form-checkbox-container'));
             const newTaskStatus = taskObject.status;
 
             oldTaskStatus == newTaskStatus
@@ -256,6 +258,7 @@ document.addEventListener('click', e => {
                 DOM.closeTaskSettings();
                 const oldTaskStatus = taskObject.status;
                 taskObject.updateTask(folder, taskSettingsInfo);
+                taskObject.updateTaskTodos(taskSettingsTodoForm);
                 const newTaskStatus = taskObject.status;
     
                 oldTaskStatus == newTaskStatus

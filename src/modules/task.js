@@ -50,6 +50,19 @@ export default class Task {
         parentFolder.tasks[taskObject.name] = taskObject;
     }
 
+    updateTaskTodos = allTodoContainers => {
+        const todoContainers = Array.from(allTodoContainers.children).filter(container => container.classList.contains('form-checkbox-container'));
+        for (let i = 0; i < todoContainers.length; i++) {
+            const todoIndex = todoContainers[i].getAttribute('todo-index');
+            const todoDescription = todoContainers[i].querySelector('[type="text"]').value;
+            const todoStatus = todoContainers[i].querySelector('[type="checkbox"]').checked;
+
+            const todoObj = this.todos[todoIndex];
+            todoObj.description = todoDescription;
+            todoObj.status = todoStatus;
+        }
+    }
+
     incrementTodosNum = () => this.#numOfTodos++;
 
     decrementTodosNum = () => this.#numOfTodos--;
