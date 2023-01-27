@@ -123,6 +123,10 @@ svg > *{
   margin: 0 calc(var(--main-padding) / 2);
 }
 
+.task-settings .task-main-info-section > div {
+  margin-bottom: 30px;
+}
+
 .task-settings.visible {
   right: 0px;
 }

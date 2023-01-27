@@ -5,7 +5,7 @@ export default class Task {
     #status;
     #priority;
     #dateCreated = new Date();
-    #dateDue = new Date();
+    #dateDue;
     #description = 'Add a description for this task!';
     #todos = {};
     #numOfTodos = 0;
@@ -15,6 +15,7 @@ export default class Task {
         this.#name = name;
         this.#status = status;
         this.#priority = priority;
+        this.#dateDue = this.initializeDueDate();
 
         if (!(this.numOfTodos)) {
             this.createTodo();
@@ -37,6 +38,16 @@ export default class Task {
     set priority(value) { this.#priority = value };
     set dateDue(value) { this.#dateDue = value };
     set description(value) { this.#description = value };
+
+    initializeDueDate = () => {
+      const dueDate = new Date();
+      dueDate.setDate(dueDate.getDate() + 1);
+      dueDate.setHours(13);
+      dueDate.setMinutes(0);
+      dueDate.setSeconds(0);
+      return dueDate;
+}
+
 
     updateTask = (parentFolder, taskSettingsInfo) => {
         const taskObject = parentFolder.tasks[taskSettingsInfo.oldTaskName];

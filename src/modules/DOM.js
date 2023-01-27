@@ -60,7 +60,7 @@ export default class DOM {
         h3.textContent = task.name;
 
         const p = document.createElement('p');
-        p.textContent = `Due in ${formatDistance(task.dateCreated, task.dateDue)}`;
+        p.textContent = DOM.updateTaskElementsDueDateDescription(task);
 
         const priorityLabel = document.createElement('div');
         priorityLabel.classList.add('priority-label', task.priority);
@@ -99,13 +99,19 @@ export default class DOM {
         const taskCard = taskElements;
 
         taskCard.addEventListener('click', e => {
+
             if (e.target.classList.contains('task-delete-icon')) {
-                // delete task
+                clearInterval(updateDueDateDesc);
                 return;
             }
             DOM.openTaskSettings(taskElements);
             DOM.populateTaskSettingsWithTaskInfo(folder.tasks[taskElements.getAttribute('task-name')]);
-        })
+        });
+
+        // update task elements due date description every 10 seconds
+        const updateDueDateDesc = setInterval(() => {
+            taskElements.querySelector('p').textContent = DOM.updateTaskElementsDueDateDescription(folder.tasks[taskElements.getAttribute('task-name')]);
+        }, 1000);
     }
 
     static openTaskSettings = () => {
@@ -235,7 +241,7 @@ document.addEventListener('click', e => {
             DOM.closeTaskSettings();
             const oldTaskStatus = taskObject.status;
             taskObject.updateTask(folder, taskSettingsInfo);
-            taskObject.updateTaskTodos(taskSettingsTodoForm.querySelectorAll('.form-checkbox-container'));
+            taskObject.updateTaskTodos(taskSettingsTodoForm);
             const newTaskStatus = taskObject.status;
 
             oldTaskStatus == newTaskStatus
