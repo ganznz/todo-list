@@ -22,6 +22,10 @@ const taskSettingsTaskDescription = taskSettings.querySelector('.task-descriptio
 const taskSettingsTodoForm = taskSettings.querySelector('.task-todos > form');
 const taskSettingsTodoAddBtn = taskSettings.querySelector('.add-todos');
 
+const folderMenuSidebar = document.querySelector('.folder-menu');
+const folderMenuSidebarFoldersList = folderMenuSidebar.querySelector('.folders-list');
+const folderMenuSidebarAddFoldersBtn = folderMenuSidebar.querySelector('.add-folders');
+
 
 export default class DOM {
 
@@ -78,6 +82,22 @@ export default class DOM {
         return taskContainer;
     }
 
+    static createFolderElements = folderObj => {
+        const li = document.createElement('li');
+        li.setAttribute('folder-index', folderObj.index);
+
+        const p = document.createElement('p');
+        p.textContent = folderObj.name;
+
+        const i = document.createElement('i');
+        i.classList.add('fa-solid', 'fa-trash-can', 'fa-lg', 'folder-delete-icon');
+
+        li.appendChild(p);
+        li.appendChild(i);
+
+        return li;
+    }
+
     static determineTasksContainer = task => {
         switch (task.status) {
             case 'upcoming':
@@ -94,6 +114,8 @@ export default class DOM {
         DOM.applyTaskElementEventListeners(taskElements);
 
     };
+
+    static appendFolderElementsToDOM = folderElements => folderMenuSidebarFoldersList.appendChild(folderElements);
 
     static applyTaskElementEventListeners = taskElements => {
         const taskCard = taskElements;
@@ -123,10 +145,24 @@ export default class DOM {
 
     static closeTaskSettings = () => {
         [sidebarBlur, taskSettings].forEach(element => {
-            element.classList.remove('visible');
             element.setAttribute('style', 'display: none');
+            element.classList.remove('visible');
         });
 
+    }
+
+    static openFoldersSidebar = () => {
+        [sidebarBlur, folderMenuSidebar].forEach(element => {
+            element.setAttribute('style', 'display: flex');
+            element.classList.add('visible');
+        });
+    }
+
+    static closeFoldersSidebar = () => {
+        [sidebarBlur, folderMenuSidebar].forEach(element => {
+            element.setAttribute('style', 'display: none');
+            element.classList.remove('visible');
+        });
     }
 
     static populateTaskSettingsTodoForm = taskObj => {
@@ -274,7 +310,27 @@ document.addEventListener('click', e => {
                 DOM.showTaskUpdatingErrorMsg();
             }
         }
+
+        if (folderMenuSidebar.getAttribute('style') == 'display: flex') {
+            DOM.closeFoldersSidebar();
+        } 
+
         return;
+    }
+
+    // folder sidebar exit button clicked on
+    if (e.target.classList.contains('folders-menu-exit-btn')) {
+        DOM.closeFoldersSidebar();
+    }
+
+    // folder sidebar add folder btn clicked on
+    if (e.target == folderMenuSidebarAddFoldersBtn) {
+        Folder.createFolder();
+    }
+
+    // task folders icon clicked on
+    if (e.target.classList.contains('folders-menu-icon')) {
+        DOM.openFoldersSidebar();
     }
 
     // task settings sidebar task status container clicked on
