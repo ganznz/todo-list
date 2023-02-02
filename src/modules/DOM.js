@@ -24,6 +24,10 @@ const taskSettingsTaskDescription = taskSettings.querySelector('.task-descriptio
 const taskSettingsTodoForm = taskSettings.querySelector('.task-todos > form');
 const taskSettingsTodoAddBtn = taskSettings.querySelector('.add-todos');
 
+const folderMenuSidebar = document.querySelector('.folder-menu');
+const folderMenuSidebarFoldersList = folderMenuSidebar.querySelector('.folders-list');
+const folderMenuSidebarAddFoldersBtn = folderMenuSidebar.querySelector('.add-folders');
+
 
 export default class DOM {
 
@@ -50,39 +54,6 @@ export default class DOM {
     }
 
     static clearTaskSettingsTodoElements = () => taskSettingsTodoForm.querySelectorAll('div').forEach(element => element.remove());
-
-    static createTaskElements = taskObj => {
-        const taskContainer = document.createElement('div');
-        taskContainer.classList.add('task');
-
-        const taskIcon = document.createElement('i');
-        taskIcon.classList.add('fa-solid', taskObj.icon, 'fa-lg',  'task-icon');
-
-        const taskInfoContainer = document.createElement('div');
-        taskInfoContainer.classList.add('task-info-container');
-
-        const h3 = document.createElement('h3');
-        h3.textContent = taskObj.name;
-
-        const p = document.createElement('p');
-        p.textContent = DOM.updateTaskElementsDueDateDescription(taskObj);
-
-        const priorityLabel = document.createElement('div');
-        priorityLabel.classList.add('priority-label', taskObj.priority);
-
-        const deleteIcon = document.createElement('i');
-        deleteIcon.classList.add('fa-solid', 'fa-trash-can', 'fa-lg', 'task-delete-icon');
-
-        taskInfoContainer.append(h3);
-        taskInfoContainer.append(p);
-        taskInfoContainer.append(priorityLabel);
-
-        taskContainer.appendChild(taskIcon);
-        taskContainer.appendChild(taskInfoContainer);
-        taskContainer.appendChild(deleteIcon);
-
-        return taskContainer;
-    }
 
     static getAllTaskIcons = () => {
         return [
@@ -156,6 +127,39 @@ export default class DOM {
         });
     }
 
+    static createTaskElements = taskObj => {
+        const taskContainer = document.createElement('div');
+        taskContainer.classList.add('task');
+
+        const taskIcon = document.createElement('i');
+        taskIcon.classList.add('fa-solid', taskObj.icon, 'fa-lg',  'task-icon');
+
+        const taskInfoContainer = document.createElement('div');
+        taskInfoContainer.classList.add('task-info-container');
+
+        const h3 = document.createElement('h3');
+        h3.textContent = taskObj.name;
+
+        const p = document.createElement('p');
+        p.textContent = DOM.updateTaskElementsDueDateDescription(taskObj);
+
+        const priorityLabel = document.createElement('div');
+        priorityLabel.classList.add('priority-label', taskObj.priority);
+
+        const deleteIcon = document.createElement('i');
+        deleteIcon.classList.add('fa-solid', 'fa-trash-can', 'fa-lg', 'task-delete-icon');
+
+        taskInfoContainer.append(h3);
+        taskInfoContainer.append(p);
+        taskInfoContainer.append(priorityLabel);
+
+        taskContainer.appendChild(taskIcon);
+        taskContainer.appendChild(taskInfoContainer);
+        taskContainer.appendChild(deleteIcon);
+
+        return taskContainer;
+    }
+
     static determineTasksContainer = task => {
         switch (task.status) {
             case 'upcoming':
@@ -172,6 +176,8 @@ export default class DOM {
         DOM.applyTaskElementEventListeners(taskElements);
 
     };
+
+    static appendFolderElementsToDOM = folderElements => folderMenuSidebarFoldersList.appendChild(folderElements);
 
     static applyTaskElementEventListeners = taskElements => {
         const taskCard = taskElements;
@@ -201,10 +207,24 @@ export default class DOM {
 
     static closeTaskSettings = () => {
         [sidebarBlur, taskSettings].forEach(element => {
-            element.classList.remove('visible');
             element.setAttribute('style', 'display: none');
+            element.classList.remove('visible');
         });
-        DOM.closeTaskIconSelectionContainer();
+
+    }
+
+    static openFoldersSidebar = () => {
+        [sidebarBlur, folderMenuSidebar].forEach(element => {
+            element.setAttribute('style', 'display: flex');
+            element.classList.add('visible');
+        });
+    }
+
+    static closeFoldersSidebar = () => {
+        [sidebarBlur, folderMenuSidebar].forEach(element => {
+            element.setAttribute('style', 'display: none');
+            element.classList.remove('visible');
+        });
 
     }
 
@@ -335,6 +355,13 @@ document.addEventListener('click', e => {
         }
     }
 
+    // task settings sidebar task icon clicked on
+    if (e.target == taskSettingsTaskIcon.querySelector('svg')) {
+        taskIconSelectionContainer.classList.contains('active')
+        ? DOM.closeTaskIconSelectionContainer()
+        : DOM.openTaskIconSelectionContainer();
+    }
+
     // sidebar blur clicked on
     if (e.target == sidebarBlur) {
         if (taskSettings.getAttribute('style') == 'display: flex') {
@@ -357,14 +384,12 @@ document.addEventListener('click', e => {
                 DOM.showTaskUpdatingErrorMsg();
             }
         }
-        return;
-    }
 
-    // task settings sidebar task icon clicked on
-    if (e.target == taskSettingsTaskIcon.querySelector('svg')) {
-        taskIconSelectionContainer.classList.contains('active')
-        ? DOM.closeTaskIconSelectionContainer()
-        : DOM.openTaskIconSelectionContainer();
+        if (folderMenuSidebar.getAttribute('style') == 'display: flex') {
+            DOM.closeFoldersSidebar();
+        } 
+
+        return;
     }
 
     // task settings sidebar task status container clicked on

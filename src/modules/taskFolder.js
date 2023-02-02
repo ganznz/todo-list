@@ -2,13 +2,17 @@ import DOM from './DOM';
 import Task from './task';
 
 export const allFolders = {};
+let currentFolderIndex = 0;
 
 export default class Folder {
-    #name = `Folder`;
+    #name = 'New folder';
+    #index;
     #tasks = {};
     #numOfTasks = 0;
 
-    constructor() {
+    constructor(index) {
+        this.#index =  index;
+
         if (!(this.#numOfTasks)) {
             this.createTask();
             this.createTask();
@@ -21,6 +25,23 @@ export default class Folder {
     get numOfTasks() { return this.#numOfTasks };
     
     set name(value) { this.#name = value };
+
+    static createFolder = () => {
+        const folderObj = new Folder(currentFolderIndex);
+        console.log(folderObj)
+        Folder.appendToFoldersObject(folderObj);
+        
+        const folderElements = DOM.createFolderElements(folderObj);
+        DOM.appendFolderElementsToDOM(folderElements);
+
+        Folder.incrementCurrentFolderIndex();
+
+        return folderObj;
+    }
+
+    static appendToFoldersObject = folderObj => allFolders[folderObj.index] = folderObj;
+
+    static incrementCurrentFolderIndex = () => currentFolderIndex++;
 
     incrementTasksNum = () => this.#numOfTasks++;
     
