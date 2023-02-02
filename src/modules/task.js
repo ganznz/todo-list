@@ -1,3 +1,4 @@
+import DOM from './DOM';
 import Todo from './todo';
 
 export default class Task {
@@ -10,6 +11,7 @@ export default class Task {
     #todos = {};
     #numOfTodos = 0;
     #currentTodoIndex = 0;
+    #icon = DOM.chooseTaskIcon();
 
     constructor(name, status, priority) {
         this.#name = name;
@@ -32,12 +34,14 @@ export default class Task {
     get description() { return this.#description };
     get todos() { return this.#todos };
     get numOfTodos() { return this.#numOfTodos };
+    get icon() { return this.#icon };
 
     set name(value) { this.#name = value };
     set status(value) { this.#status = value };
     set priority(value) { this.#priority = value };
     set dateDue(value) { this.#dateDue = value };
     set description(value) { this.#description = value };
+    set icon(value) { this.#icon = value };
 
     initializeDueDate = () => {
       const dueDate = new Date();

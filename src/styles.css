@@ -20,6 +20,12 @@
   font-family: sans-serif;
 }
 
+/* hide scrollbars */
+body *:not(.main-content-container) {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 .all-content {
   background-color: white;
   padding: var(--main-padding);
@@ -139,6 +145,13 @@ svg > *{
   display: flex;
   flex-direction: column;
   gap: 20px;
+  margin-bottom: var(--task-settings-minor-info-section-margin);
+}
+
+.task-settings .sidebar-title .sidebar-title-main {
+  display: flex;
+  gap: 15px;
+  align-items: center;
 }
 
 .task-settings .sidebar-title .task-minor-info-section {
@@ -148,7 +161,37 @@ svg > *{
   font-size: 1.4rem;
 }
 
+.task-settings .task-minor-info-section .task-icon-selection-container {
+  height: 0px;
+  background-color: rgb(240, 240, 240);
+  display: grid;
+  grid-template-columns: repeat(8, 50px);
+  grid-template-rows: repeat(8, 50px);
+  justify-content: space-around;
+  overflow: scroll;
+  transition: all 0.3s;
+}
+
+.task-settings .task-minor-info-section .task-icon-selection-container.active {
+  height: 200px;
+}
+
+.task-settings .task-minor-info-section .task-icon-selection-container > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.task-settings .task-minor-info-section .task-icon-selection-container > div > svg {
+  color: var(--grey);
+}
+
+.task-settings .task-minor-info-section .task-icon-selection-container > div > svg.selected-task-icon {
+  color: var(--priority-green);
+}
+
 .task-settings .sidebar-title svg,
+.task-settings .sidebar-title,
 .folder-menu svg {
   font-size: 1.4rem;
   color: var(--grey);
@@ -315,20 +358,12 @@ header > input:focus {
   scale: 1.1;
 }
 
-.task-settings .sidebar-title {
-  margin-bottom: 50px;
-}
-
 .task-settings .sidebar-title input {
   border: none;
   padding: 5px;
   border-radius: 6px;
   transition: all 0.1s;
-}
-
-.task-settings .sidebar-title svg:last-child {
-  color: var(--priority-red);
-  margin-left: auto;
+  flex-grow: 1;
 }
 
 .task-settings .sidebar-title .task-update-error-msg {
@@ -499,8 +534,7 @@ main {
   margin-left: auto;
 }
 
-.task .fa-trash-can:hover,
-.task-settings .sidebar-title svg:last-child:hover {
+.task .fa-trash-can:hover {
   color: var(--priority-red);
   transform: rotate(-10deg);
 }

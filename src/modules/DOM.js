@@ -13,7 +13,9 @@ const sidebarBlur = document.querySelector('.sidebar-blur');
 
 const taskSettings = document.querySelector('.task-settings');
 const taskSettingsName = taskSettings.querySelector('.sidebar-title input');
+const taskSettingsTaskIcon = taskSettings.querySelector('.task-settings-task-icon');
 const taskUpdateErrorMsg = taskSettings.querySelector('.task-update-error-msg');
+const taskIconSelectionContainer = taskSettings.querySelector('.task-icon-selection-container')
 const taskSettingsTaskStatusContainer = taskSettings.querySelector('.task-status');
 const taskSettingsTaskPriorityContainer = taskSettings.querySelector('.task-priority');
 const taskSettingsTaskDateCreatedContainer = taskSettings.querySelector('.task-date-created');
@@ -49,21 +51,24 @@ export default class DOM {
 
     static clearTaskSettingsTodoElements = () => taskSettingsTodoForm.querySelectorAll('div').forEach(element => element.remove());
 
-    static createTaskElements = task => {
+    static createTaskElements = taskObj => {
         const taskContainer = document.createElement('div');
         taskContainer.classList.add('task');
+
+        const taskIcon = document.createElement('i');
+        taskIcon.classList.add('fa-solid', taskObj.icon, 'fa-lg',  'task-icon');
 
         const taskInfoContainer = document.createElement('div');
         taskInfoContainer.classList.add('task-info-container');
 
         const h3 = document.createElement('h3');
-        h3.textContent = task.name;
+        h3.textContent = taskObj.name;
 
         const p = document.createElement('p');
-        p.textContent = DOM.updateTaskElementsDueDateDescription(task);
+        p.textContent = DOM.updateTaskElementsDueDateDescription(taskObj);
 
         const priorityLabel = document.createElement('div');
-        priorityLabel.classList.add('priority-label', task.priority);
+        priorityLabel.classList.add('priority-label', taskObj.priority);
 
         const deleteIcon = document.createElement('i');
         deleteIcon.classList.add('fa-solid', 'fa-trash-can', 'fa-lg', 'task-delete-icon');
@@ -72,10 +77,83 @@ export default class DOM {
         taskInfoContainer.append(p);
         taskInfoContainer.append(priorityLabel);
 
+        taskContainer.appendChild(taskIcon);
         taskContainer.appendChild(taskInfoContainer);
         taskContainer.appendChild(deleteIcon);
 
         return taskContainer;
+    }
+
+    static getAllTaskIcons = () => {
+        return [
+            'fa-scroll',
+            'fa-palette',
+            'fa-code',
+            'fa-face-smile',
+            'fa-book',
+            'fa-money-bill',
+            'fa-comments',
+            'fa-tree',
+            'fa-newspaper',
+            'fa-wrench',
+            'fa-crown',
+            'fa-circle-check',
+            'fa-volleyball',
+            'fa-peace',
+            'fa-paw',
+            'fa-paintbrush',
+            'fa-pen-clip',
+            'fa-message',
+            'fa-gas-pump',
+            'fa-bread-slice',
+            'fa-car',
+            'fa-bus-simple',
+            'fa-apple-whole',
+            'fa-gamepad',
+            'fa-cookie-bite',
+            'fa-child',
+            'fa-handshake',
+            'fa-gift',
+            'fa-heart',
+            'fa-leaf',
+            'fa-globe',
+            'fa-plane-arrival',
+            'fa-user-tie',
+        ]
+    }
+
+    static chooseTaskIcon = () => {
+        const allTaskIcons = DOM.getAllTaskIcons();
+        return allTaskIcons[Math.floor(Math.random() * allTaskIcons.length)];
+    }
+
+    static renderTaskIconSelectionContainer = allTaskIcons => {
+        for (const iconClass of allTaskIcons) {
+            const div = document.createElement('div');
+            
+            const i = document.createElement('i');
+            i.classList.add('fa-solid', 'fa-xl', iconClass);
+            
+            div.appendChild(i);
+            taskIconSelectionContainer.appendChild(div);
+        }
+    }
+
+    static openTaskIconSelectionContainer = () => {
+        DOM.displaySelectedTaskIconInTaskIconSelectionContainer();
+        taskIconSelectionContainer.classList.add('active');
+    }
+
+    static closeTaskIconSelectionContainer = () => taskIconSelectionContainer.classList.remove('active');
+
+    static displaySelectedTaskIconInTaskIconSelectionContainer = () => {
+        const taskObj = folder.tasks[taskSettings.getAttribute('selected-task')];
+
+        taskIconSelectionContainer.querySelectorAll('div > svg').forEach(icon => {
+            icon.classList.contains(taskObj.icon)
+            ? icon.classList.add('selected-task-icon')
+            : icon.classList.remove('selected-task-icon')
+        });
     }
 
     static determineTasksContainer = task => {
@@ -126,6 +204,7 @@ export default class DOM {
             element.classList.remove('visible');
             element.setAttribute('style', 'display: none');
         });
+        DOM.closeTaskIconSelectionContainer();
 
     }
 
@@ -140,6 +219,10 @@ export default class DOM {
     static populateTaskSettingsWithTaskInfo = taskObj => {
         taskSettings.setAttribute('selected-task', taskObj.name);
         taskSettingsName.value = taskObj.name;
+        taskSettingsTaskIcon.innerHTML = '';
+        const taskIcon = document.createElement('i');
+        taskIcon.className = `fa-solid fa-2xl ${taskObj.icon}`;
+        taskSettingsTaskIcon.appendChild(taskIcon)
         taskSettingsTaskStatusContainer.querySelector('h5').className = taskObj.status;
         taskSettingsTaskPriorityContainer.querySelector('h5').className = taskObj.priority;
         taskSettingsTaskDateCreatedContainer.querySelector('h5').textContent = `${format(taskObj.dateCreated, 'PP')} ${format(taskObj.dateCreated, 'p')}`;
@@ -277,6 +360,13 @@ document.addEventListener('click', e => {
         return;
     }
 
+    // task settings sidebar task icon clicked on
+    if (e.target == taskSettingsTaskIcon.querySelector('svg')) {
+        taskIconSelectionContainer.classList.contains('active')
+        ? DOM.closeTaskIconSelectionContainer()
+        : DOM.openTaskIconSelectionContainer();
+    }
+
     // task settings sidebar task status container clicked on
     if (e.target == taskSettingsTaskStatusContainer) {
         DOM.toggleSettingsSidebarTaskStatuses();
@@ -312,3 +402,4 @@ document.addEventListener('click', e => {
 })
 
 DOM.initiateDragula();
+DOM.renderTaskIconSelectionContainer(DOM.getAllTaskIcons());
