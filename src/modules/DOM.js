@@ -1,6 +1,6 @@
 import { iterateEventOverNodeList, setAttributes } from './helperFunctions';
 import Task from './task';
-import Folder from './taskFolder';
+import Folder, { allFolders } from './taskFolder';
 import { format, formatDistance } from 'date-fns';
 import dragula from 'dragula';
 
@@ -119,7 +119,8 @@ export default class DOM {
     static closeTaskIconSelectionContainer = () => taskIconSelectionContainer.classList.remove('active');
 
     static displaySelectedTaskIconInTaskIconSelectionContainer = () => {
-        const taskObj = folder.tasks[taskSettings.getAttribute('selected-task')];
+        const folderObj = allFolders[folderMenuSidebarFoldersList.querySelector('.selected-folder').getAttribute('folder-index')];
+        const taskObj = folderObj.tasks[taskSettings.getAttribute('selected-task')];
         taskIconSelectionContainer.setAttribute('selected-icon', taskObj.icon);
 
         taskIconSelectionContainer.querySelectorAll('div > svg').forEach(icon => {
@@ -193,10 +194,9 @@ export default class DOM {
 
     };
 
-    static appendFolderElementsToDOM = folderElements => folderMenuSidebarFoldersList.appendChild(folderElements);
-
     static applyTaskElementEventListeners = taskElements => {
         const taskCard = taskElements;
+        const folderObj = allFolders[folderMenuSidebarFoldersList.querySelector('.selected-folder').getAttribute('folder-index')];
 
         taskCard.addEventListener('click', e => {
 
@@ -205,18 +205,46 @@ export default class DOM {
                 return;
             }
             DOM.openTaskSettings(taskElements);
-            DOM.populateTaskSettingsWithTaskInfo(folder.tasks[taskElements.getAttribute('task-name')]);
+            DOM.populateTaskSettingsWithTaskInfo(folderObj.tasks[taskElements.getAttribute('task-name')]);
             DOM.displaySelectedTaskIconInTaskIconSelectionContainer();
         });
 
         // update task elements due date description every 10 seconds
         const updateDueDateDesc = setInterval(() => {
             try {
-                taskElements.querySelector('p').textContent = DOM.updateTaskElementsDueDateDescription(folder.tasks[taskElements.getAttribute('task-name')]);
+                taskElements.querySelector('p').textContent = DOM.updateTaskElementsDueDateDescription(folderObj.tasks[taskElements.getAttribute('task-name')]);
             } catch {
                 clearInterval(updateDueDateDesc);
             }
         }, 1000);
+    }
+
+    static createFolderElements = folderObj => {
+        const li = document.createElement('li');
+        li.setAttribute('folder-index', folderObj.index);
+
+        const p = document.createElement('p');
+        p.textContent = folderObj.name;
+
+        const i = document.createElement('i');
+        i.classList.add('fa-solid', 'fa-trash-can', 'fa-lg', 'folder-delete-icon');
+
+        li.appendChild(p);
+        li.appendChild(i);
+
+        return li;
+    }
+
+    static clearFolderTasksElements = () => document.querySelectorAll('.tasks-container').forEach(container => container.innerHTML = "");
+
+    static appendFolderElementsToDOM = folderElements => folderMenuSidebarFoldersList.appendChild(folderElements);
+
+    static updateCurrentlySelectedFolder = selectedFolderIndex => {
+        [...folderMenuSidebarFoldersList.children].forEach(folderElements => {
+            folderElements.getAttribute('folder-index') == selectedFolderIndex
+            ? folderElements.classList.add('selected-folder')
+            : folderElements.classList.remove('selected-folder');
+        });
     }
 
     static openTaskSettings = () => {
@@ -330,7 +358,8 @@ export default class DOM {
         
         // update tasks status when dropped into task container 
         .on('drop', (taskElements, taskContainer) => {
-            const taskObject = folder.tasks[taskElements.getAttribute('task-name')];
+            const folderObj = allFolders[folderMenuSidebarFoldersList.querySelector('.selected-folder').getAttribute('folder-index')];
+            const taskObject = folderObj.tasks[taskElements.getAttribute('task-name')];
             taskObject.status = Task.determineTaskStatus(taskContainer);
         })
     }
@@ -357,14 +386,26 @@ export default class DOM {
     }
 }
 
-const folder = new Folder();
-
-iterateEventOverNodeList(addTaskBtns, 'click', folder.createTask);
-
 
 
 document.addEventListener('click', e => {
-    const taskObject = folder.tasks[taskSettings.getAttribute('selected-task')];
+    const folderObj = allFolders[folderMenuSidebarFoldersList.querySelector('.selected-folder').getAttribute('folder-index')];
+    const taskObject = folderObj.tasks[taskSettings.getAttribute('selected-task')];
+
+    // folder sidebar exit button clicked on
+    if (e.target.classList.contains('folders-menu-exit-btn')) {
+        DOM.closeFoldersSidebar();
+    }
+
+    // folder sidebar add folder btn clicked on
+    if (e.target == folderMenuSidebarAddFoldersBtn) {
+        Folder.createFolder();
+    }
+
+    // task folders icon clicked on
+    if (e.target.classList.contains('folders-menu-icon')) {
+        DOM.openFoldersSidebar();
+    }
 
     // task settings exit button clicked on
     if (e.target.classList.contains('task-settings-exit-btn')) {
@@ -372,11 +413,11 @@ document.addEventListener('click', e => {
         const taskSettingsInfo = DOM.getTaskSettingsInfo();
         
         // update task object
-        if (!(folder.taskNameAlreadyExists(taskSettingsInfo.taskName, taskSettingsInfo.oldTaskName))) {
+        if (!(folderObj.taskNameAlreadyExists(taskSettingsInfo.taskName, taskSettingsInfo.oldTaskName))) {
             DOM.closeTaskSettings();
             DOM.closeTaskIconSelectionContainer();
             const oldTaskStatus = taskObject.status;
-            taskObject.updateTask(folder, taskSettingsInfo);
+            taskObject.updateTask(folderObj, taskSettingsInfo);
             taskObject.updateTaskTodos(taskSettingsTodoForm);
             const newTaskStatus = taskObject.status;
 
@@ -395,11 +436,11 @@ document.addEventListener('click', e => {
             const taskSettingsInfo = DOM.getTaskSettingsInfo();
             
             // update task object
-            if (!(folder.taskNameAlreadyExists(taskSettingsInfo.taskName, taskSettingsInfo.oldTaskName))) {
+            if (!(folderObj.taskNameAlreadyExists(taskSettingsInfo.taskName, taskSettingsInfo.oldTaskName))) {
                 DOM.closeTaskSettings();
                 DOM.closeTaskIconSelectionContainer();
                 const oldTaskStatus = taskObject.status;
-                taskObject.updateTask(folder, taskSettingsInfo);
+                taskObject.updateTask(folderObj, taskSettingsInfo);
                 taskObject.updateTaskTodos(taskSettingsTodoForm);
                 const newTaskStatus = taskObject.status;
     
@@ -443,15 +484,15 @@ document.addEventListener('click', e => {
 
     // delete task when task elements delete icon clicked on
     if (e.target.classList.contains('task-delete-icon')) {
-        folder.decrementTasksNum();
+        folderObj.decrementTasksNum();
         const taskElements = e.target.parentNode;
-        delete folder.tasks[taskElements.getAttribute('task-name')];
+        delete folderObj.tasks[taskElements.getAttribute('task-name')];
         taskElements.remove();
     }
 
     // add todos to task when todo add btn clicked on
     if (e.target == taskSettingsTodoAddBtn) {
-        const taskObj = folder.tasks[taskSettings.getAttribute('selected-task')];
+        const taskObj = folderObj.tasks[taskSettings.getAttribute('selected-task')];
         const newTodoObj = taskObj.createTodo();
         const todoElements = DOM.createTodoElements(newTodoObj);
         taskSettingsTodoForm.insertBefore(todoElements, taskSettingsTodoAddBtn);
@@ -459,11 +500,14 @@ document.addEventListener('click', e => {
 
     // delete todos when todo delete icon clicked on
     if (e.target.classList.contains('todo-delete-icon')) {
-        const taskObj = folder.tasks[taskSettings.getAttribute('selected-task')];
+        const taskObj = folderObj.tasks[taskSettings.getAttribute('selected-task')];
         const todoIndex = e.target.parentNode.getAttribute('todo-index');
         taskObj.deleteTodo(todoIndex);
     }
 })
+
+Folder.createFolder();
+iterateEventOverNodeList(addTaskBtns, 'click', allFolders[0].createTask);
 
 DOM.initiateDragula();
 DOM.renderTaskIconSelectionContainer(DOM.getAllTaskIcons());

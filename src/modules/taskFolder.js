@@ -6,12 +6,15 @@ let currentFolderIndex = 0;
 
 export default class Folder {
     #name = 'New folder';
-    #index;
+    #index = currentFolderIndex;
     #tasks = {};
     #numOfTasks = 0;
 
-    constructor(index) {
-        this.#index =  index;
+    constructor() {
+        Folder.appendToFoldersObject(this);
+        const folderElements = DOM.createFolderElements(this);
+        DOM.appendFolderElementsToDOM(folderElements);
+        DOM.updateCurrentlySelectedFolder(this.index);
 
         if (!(this.#numOfTasks)) {
             this.createTask();
@@ -23,16 +26,15 @@ export default class Folder {
     get name() { return this.#name };
     get tasks() { return this.#tasks };
     get numOfTasks() { return this.#numOfTasks };
+    get index() { return this.#index };
     
     set name(value) { this.#name = value };
 
     static createFolder = () => {
-        const folderObj = new Folder(currentFolderIndex);
-        console.log(folderObj)
-        Folder.appendToFoldersObject(folderObj);
-        
-        const folderElements = DOM.createFolderElements(folderObj);
-        DOM.appendFolderElementsToDOM(folderElements);
+        DOM.clearFolderTasksElements();
+        console.log('sdsd')
+        const folderObj = new Folder();
+        // Folder.appendToFoldersObject(folderObj);
 
         Folder.incrementCurrentFolderIndex();
 
