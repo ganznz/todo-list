@@ -101,6 +101,7 @@ export default class DOM {
     static renderTaskIconSelectionContainer = allTaskIcons => {
         for (const iconClass of allTaskIcons) {
             const div = document.createElement('div');
+            div.setAttribute('icon-class-name', iconClass);
             
             const i = document.createElement('i');
             i.classList.add('fa-solid', 'fa-xl', iconClass);
@@ -119,12 +120,27 @@ export default class DOM {
 
     static displaySelectedTaskIconInTaskIconSelectionContainer = () => {
         const taskObj = folder.tasks[taskSettings.getAttribute('selected-task')];
+        taskIconSelectionContainer.setAttribute('selected-icon', taskObj.icon);
 
         taskIconSelectionContainer.querySelectorAll('div > svg').forEach(icon => {
             icon.classList.contains(taskObj.icon)
             ? icon.classList.add('selected-task-icon')
-            : icon.classList.remove('selected-task-icon')
+            : icon.classList.remove('selected-task-icon');
         });
+    }
+
+    static updateTaskSettingsTaskIconDisplayed = taskObj => {
+        taskSettingsTaskIcon.innerHTML = '';
+        const taskIcon = document.createElement('i');
+        taskIcon.classList.add('fa-solid', 'fa-2xl', taskObj.icon);
+        
+        taskSettingsTaskIcon.appendChild(taskIcon);
+    }
+
+    static updateDisplayedSelectedTaskIconInTaskIconSelectionContainer = (e, taskObj) => {
+        taskObj.icon = e.target.getAttribute('icon-class-name');
+        DOM.displaySelectedTaskIconInTaskIconSelectionContainer();
+        
     }
 
     static createTaskElements = taskObj => {
@@ -190,11 +206,16 @@ export default class DOM {
             }
             DOM.openTaskSettings(taskElements);
             DOM.populateTaskSettingsWithTaskInfo(folder.tasks[taskElements.getAttribute('task-name')]);
+            DOM.displaySelectedTaskIconInTaskIconSelectionContainer();
         });
 
         // update task elements due date description every 10 seconds
         const updateDueDateDesc = setInterval(() => {
-            taskElements.querySelector('p').textContent = DOM.updateTaskElementsDueDateDescription(folder.tasks[taskElements.getAttribute('task-name')]);
+            try {
+                taskElements.querySelector('p').textContent = DOM.updateTaskElementsDueDateDescription(folder.tasks[taskElements.getAttribute('task-name')]);
+            } catch {
+                clearInterval(updateDueDateDesc);
+            }
         }, 1000);
     }
 
@@ -240,9 +261,13 @@ export default class DOM {
         taskSettings.setAttribute('selected-task', taskObj.name);
         taskSettingsName.value = taskObj.name;
         taskSettingsTaskIcon.innerHTML = '';
+
         const taskIcon = document.createElement('i');
         taskIcon.className = `fa-solid fa-2xl ${taskObj.icon}`;
-        taskSettingsTaskIcon.appendChild(taskIcon)
+        taskSettingsTaskIcon.appendChild(taskIcon);
+
+        taskIconSelectionContainer.setAttribute('selected-icon', taskObj.icon);
+
         taskSettingsTaskStatusContainer.querySelector('h5').className = taskObj.status;
         taskSettingsTaskPriorityContainer.querySelector('h5').className = taskObj.priority;
         taskSettingsTaskDateCreatedContainer.querySelector('h5').textContent = `${format(taskObj.dateCreated, 'PP')} ${format(taskObj.dateCreated, 'p')}`;
@@ -287,9 +312,15 @@ export default class DOM {
         const taskElements = document.querySelector(`[task-name="${oldTaskName}"]`);
         taskElements.setAttribute('task-name', taskObj.name);
         const taskInfoContainer = taskElements.querySelector('.task-info-container');
+        
         taskInfoContainer.querySelector('h3').textContent = taskObj.name;
         taskInfoContainer.querySelector('p').textContent = DOM.updateTaskElementsDueDateDescription(taskObj);
-        taskInfoContainer.querySelector('.priority-label').className = `priority-label ${taskObj.priority}`
+        taskInfoContainer.querySelector('.priority-label').className = `priority-label ${taskObj.priority}`;
+
+        taskElements.querySelector('svg:first-child').remove();
+        const taskIcon = document.createElement('i');
+        taskIcon.classList.add('fa-solid', `${taskObj.icon}`, 'fa-lg', 'task-icon');
+        taskElements.insertBefore(taskIcon, taskInfoContainer);
     }
 
     static initiateDragula = () => {
@@ -333,15 +364,17 @@ iterateEventOverNodeList(addTaskBtns, 'click', folder.createTask);
 
 
 document.addEventListener('click', e => {
+    const taskObject = folder.tasks[taskSettings.getAttribute('selected-task')];
+
     // task settings exit button clicked on
     if (e.target.classList.contains('task-settings-exit-btn')) {
         
         const taskSettingsInfo = DOM.getTaskSettingsInfo();
-        const taskObject = folder.tasks[taskSettings.getAttribute('selected-task')];
         
         // update task object
         if (!(folder.taskNameAlreadyExists(taskSettingsInfo.taskName, taskSettingsInfo.oldTaskName))) {
             DOM.closeTaskSettings();
+            DOM.closeTaskIconSelectionContainer();
             const oldTaskStatus = taskObject.status;
             taskObject.updateTask(folder, taskSettingsInfo);
             taskObject.updateTaskTodos(taskSettingsTodoForm);
@@ -355,23 +388,16 @@ document.addEventListener('click', e => {
         }
     }
 
-    // task settings sidebar task icon clicked on
-    if (e.target == taskSettingsTaskIcon.querySelector('svg')) {
-        taskIconSelectionContainer.classList.contains('active')
-        ? DOM.closeTaskIconSelectionContainer()
-        : DOM.openTaskIconSelectionContainer();
-    }
-
     // sidebar blur clicked on
     if (e.target == sidebarBlur) {
         if (taskSettings.getAttribute('style') == 'display: flex') {
             
             const taskSettingsInfo = DOM.getTaskSettingsInfo();
-            const taskObject = folder.tasks[taskSettings.getAttribute('selected-task')];
             
             // update task object
             if (!(folder.taskNameAlreadyExists(taskSettingsInfo.taskName, taskSettingsInfo.oldTaskName))) {
                 DOM.closeTaskSettings();
+                DOM.closeTaskIconSelectionContainer();
                 const oldTaskStatus = taskObject.status;
                 taskObject.updateTask(folder, taskSettingsInfo);
                 taskObject.updateTaskTodos(taskSettingsTodoForm);
@@ -390,6 +416,19 @@ document.addEventListener('click', e => {
         } 
 
         return;
+    }
+
+    // task settings sidebar task icon clicked on
+    if (e.target == taskSettingsTaskIcon.querySelector('svg')) {
+        taskIconSelectionContainer.classList.contains('active')
+        ? DOM.closeTaskIconSelectionContainer()
+        : DOM.openTaskIconSelectionContainer();
+    }
+
+    // task settings sidebar task icons in task icon container being clicked on
+    if (e.target.parentNode == taskIconSelectionContainer) {
+        DOM.updateDisplayedSelectedTaskIconInTaskIconSelectionContainer(e, taskObject);
+        DOM.updateTaskSettingsTaskIconDisplayed(taskObject);
     }
 
     // task settings sidebar task status container clicked on

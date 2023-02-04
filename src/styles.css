@@ -184,6 +184,7 @@ svg > *{
 
 .task-settings .task-minor-info-section .task-icon-selection-container > div > svg {
   color: var(--grey);
+  pointer-events: none;
 }
 
 .task-settings .task-minor-info-section .task-icon-selection-container > div > svg.selected-task-icon {
