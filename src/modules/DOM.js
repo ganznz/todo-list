@@ -24,9 +24,11 @@ const taskSettingsTaskDescription = taskSettings.querySelector('.task-descriptio
 const taskSettingsTodoForm = taskSettings.querySelector('.task-todos > form');
 const taskSettingsTodoAddBtn = taskSettings.querySelector('.add-todos');
 
+const folderNameInput = document.querySelector('header > input');
 const folderMenuSidebar = document.querySelector('.folder-menu');
 const folderMenuSidebarFoldersList = folderMenuSidebar.querySelector('.folders-list');
 const folderMenuSidebarAddFoldersBtn = folderMenuSidebar.querySelector('.add-folders');
+const folderDeletionMsg = folderMenuSidebar.querySelector('.folder-deletion-error-msg');
 
 
 export default class DOM {
@@ -147,6 +149,7 @@ export default class DOM {
     static createTaskElements = taskObj => {
         const taskContainer = document.createElement('div');
         taskContainer.classList.add('task');
+        taskContainer.setAttribute('task-name', taskObj.name);
 
         const taskIcon = document.createElement('i');
         taskIcon.classList.add('fa-solid', taskObj.icon, 'fa-lg',  'task-icon');
@@ -194,12 +197,19 @@ export default class DOM {
 
     };
 
+    static renderFolderTasksElements = folderObj => {
+        const allTasks = folderObj.tasks;
+        for (const taskName in allTasks) {
+            const taskObj = allTasks[taskName];
+            const taskEl = DOM.createTaskElements(taskObj);
+            DOM.appendTaskElementsToDOM(DOM.determineTasksContainer(taskObj), taskEl);
+        }
+    }
+
     static applyTaskElementEventListeners = taskElements => {
-        const taskCard = taskElements;
         const folderObj = allFolders[folderMenuSidebarFoldersList.querySelector('.selected-folder').getAttribute('folder-index')];
 
-        taskCard.addEventListener('click', e => {
-
+        taskElements.addEventListener('click', e => {
             if (e.target.classList.contains('task-delete-icon')) {
                 clearInterval(updateDueDateDesc);
                 return;
@@ -219,6 +229,42 @@ export default class DOM {
         }, 1000);
     }
 
+    static updateFolderNameInput = folderObj => folderNameInput.value = folderObj.name; 
+
+    static applyFolderElementEventListeners = folderElements => {
+        folderElements.addEventListener('click', e => {
+
+            // render selected folder
+            if (e.target == folderElements) {
+                DOM.clearFolderTasksElements();
+                DOM.updateCurrentlySelectedFolder(e.target.getAttribute('folder-index'));
+
+                const selectedFolderElements = folderMenuSidebarFoldersList.querySelector('.selected-folder');
+                const folderObj = allFolders[selectedFolderElements.getAttribute('folder-index')];
+                DOM.renderFolderTasksElements(folderObj);
+                DOM.updateFolderNameInput(folderObj);
+            }
+
+            // delete folder
+            if (e.target.classList.contains('folder-delete-icon')) {
+                const selectedFolderElements = e.target.parentNode;
+                const folderObj = allFolders[selectedFolderElements.getAttribute('folder-index')];
+
+                // delete folder only if others exist
+                if (Object.keys(allFolders).length > 1) {
+                    Folder.deleteFolder(folderObj, selectedFolderElements);
+                    
+                    DOM.clearFolderTasksElements();
+                    DOM.updateCurrentlySelectedFolder(Object.keys(allFolders)[0]);
+                    DOM.renderFolderTasksElements(allFolders[Object.keys(allFolders)[0]]);
+                    DOM.updateFolderNameInput(allFolders[document.querySelector('.selected-folder').getAttribute('folder-index')]);
+                } else {
+                    DOM.showFolderDeletionErrorMsg();
+                }
+            }
+        })
+    }
+
     static createFolderElements = folderObj => {
         const li = document.createElement('li');
         li.setAttribute('folder-index', folderObj.index);
@@ -231,6 +277,8 @@ export default class DOM {
 
         li.appendChild(p);
         li.appendChild(i);
+
+        DOM.applyFolderElementEventListeners(li);
 
         return li;
     }
@@ -328,7 +376,6 @@ export default class DOM {
 
         // create new task elements
         const taskElements = DOM.createTaskElements(taskObj);
-        taskElements.setAttribute('task-name', taskObj.name);
         const taskInfoContainer = taskElements.querySelector('.task-info-container');
         taskInfoContainer.querySelector('h3').textContent = taskObj.name;
         taskInfoContainer.querySelector('p').textContent = DOM.updateTaskElementsDueDateDescription(taskObj);
@@ -384,13 +431,27 @@ export default class DOM {
             }, 2000);
         }
     }
+
+    static showFolderDeletionErrorMsg = () => {
+        if (!(folderDeletionMsg.classList.contains('active'))) {
+            folderDeletionMsg.classList.add('active');
+            setTimeout(() => {
+                folderDeletionMsg.classList.remove('active'); 
+            }, 2000);
+        }
+    }
 }
+
+// folder name input value changed
+folderNameInput.addEventListener('change', e => {
+    const folderObj = allFolders[folderMenuSidebarFoldersList.querySelector('.selected-folder').getAttribute('folder-index')];
+    const folderElements = folderMenuSidebarFoldersList.querySelector('.selected-folder');
+    folderObj.updateFolder(e.target.value, folderElements);
+})
 
 
 
 document.addEventListener('click', e => {
-    const folderObj = allFolders[folderMenuSidebarFoldersList.querySelector('.selected-folder').getAttribute('folder-index')];
-    const taskObject = folderObj.tasks[taskSettings.getAttribute('selected-task')];
 
     // folder sidebar exit button clicked on
     if (e.target.classList.contains('folders-menu-exit-btn')) {
@@ -399,7 +460,8 @@ document.addEventListener('click', e => {
 
     // folder sidebar add folder btn clicked on
     if (e.target == folderMenuSidebarAddFoldersBtn) {
-        Folder.createFolder();
+        const folderObj = Folder.createFolder();
+        DOM.updateFolderNameInput(folderObj)
     }
 
     // task folders icon clicked on
@@ -409,6 +471,8 @@ document.addEventListener('click', e => {
 
     // task settings exit button clicked on
     if (e.target.classList.contains('task-settings-exit-btn')) {
+        const folderObj = allFolders[folderMenuSidebarFoldersList.querySelector('.selected-folder').getAttribute('folder-index')];
+        const taskObject = folderObj.tasks[taskSettings.getAttribute('selected-task')];
         
         const taskSettingsInfo = DOM.getTaskSettingsInfo();
         
@@ -431,6 +495,9 @@ document.addEventListener('click', e => {
 
     // sidebar blur clicked on
     if (e.target == sidebarBlur) {
+        const folderObj = allFolders[folderMenuSidebarFoldersList.querySelector('.selected-folder').getAttribute('folder-index')];
+        const taskObject = folderObj.tasks[taskSettings.getAttribute('selected-task')];
+
         if (taskSettings.getAttribute('style') == 'display: flex') {
             
             const taskSettingsInfo = DOM.getTaskSettingsInfo();
@@ -468,6 +535,9 @@ document.addEventListener('click', e => {
 
     // task settings sidebar task icons in task icon container being clicked on
     if (e.target.parentNode == taskIconSelectionContainer) {
+        const folderObj = allFolders[folderMenuSidebarFoldersList.querySelector('.selected-folder').getAttribute('folder-index')];
+        const taskObject = folderObj.tasks[taskSettings.getAttribute('selected-task')];
+
         DOM.updateDisplayedSelectedTaskIconInTaskIconSelectionContainer(e, taskObject);
         DOM.updateTaskSettingsTaskIconDisplayed(taskObject);
     }
@@ -484,6 +554,8 @@ document.addEventListener('click', e => {
 
     // delete task when task elements delete icon clicked on
     if (e.target.classList.contains('task-delete-icon')) {
+        const folderObj = allFolders[folderMenuSidebarFoldersList.querySelector('.selected-folder').getAttribute('folder-index')];
+
         folderObj.decrementTasksNum();
         const taskElements = e.target.parentNode;
         delete folderObj.tasks[taskElements.getAttribute('task-name')];
@@ -492,7 +564,9 @@ document.addEventListener('click', e => {
 
     // add todos to task when todo add btn clicked on
     if (e.target == taskSettingsTodoAddBtn) {
+        const folderObj = allFolders[folderMenuSidebarFoldersList.querySelector('.selected-folder').getAttribute('folder-index')];
         const taskObj = folderObj.tasks[taskSettings.getAttribute('selected-task')];
+
         const newTodoObj = taskObj.createTodo();
         const todoElements = DOM.createTodoElements(newTodoObj);
         taskSettingsTodoForm.insertBefore(todoElements, taskSettingsTodoAddBtn);
@@ -500,14 +574,17 @@ document.addEventListener('click', e => {
 
     // delete todos when todo delete icon clicked on
     if (e.target.classList.contains('todo-delete-icon')) {
-        const taskObj = folderObj.tasks[taskSettings.getAttribute('selected-task')];
+        const folderObj = allFolders[folderMenuSidebarFoldersList.querySelector('.selected-folder').getAttribute('folder-index')];
         const todoIndex = e.target.parentNode.getAttribute('todo-index');
         taskObj.deleteTodo(todoIndex);
     }
 })
 
-Folder.createFolder();
-iterateEventOverNodeList(addTaskBtns, 'click', allFolders[0].createTask);
-
 DOM.initiateDragula();
+Folder.createFolder();
+
+iterateEventOverNodeList(addTaskBtns, 'click', e => {
+    allFolders[document.querySelector('.selected-folder').getAttribute('folder-index')].createTask(e);
+});
+
 DOM.renderTaskIconSelectionContainer(DOM.getAllTaskIcons());

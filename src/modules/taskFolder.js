@@ -11,6 +11,7 @@ export default class Folder {
     #numOfTasks = 0;
 
     constructor() {
+        // Folder.createFolder method relies on these methods running before it on instantiation
         Folder.appendToFoldersObject(this);
         const folderElements = DOM.createFolderElements(this);
         DOM.appendFolderElementsToDOM(folderElements);
@@ -32,9 +33,7 @@ export default class Folder {
 
     static createFolder = () => {
         DOM.clearFolderTasksElements();
-        console.log('sdsd')
         const folderObj = new Folder();
-        // Folder.appendToFoldersObject(folderObj);
 
         Folder.incrementCurrentFolderIndex();
 
@@ -44,6 +43,16 @@ export default class Folder {
     static appendToFoldersObject = folderObj => allFolders[folderObj.index] = folderObj;
 
     static incrementCurrentFolderIndex = () => currentFolderIndex++;
+
+    static deleteFolder = (folderObj, folderElements) => {
+        delete allFolders[folderObj.index];
+        folderElements.remove();
+    }
+
+    updateFolder = (newFolderName, folderElements) => {
+        this.name = newFolderName;
+        folderElements.querySelector('p').textContent = newFolderName;
+    }
 
     incrementTasksNum = () => this.#numOfTasks++;
     
@@ -59,7 +68,7 @@ export default class Folder {
         
         const unusedTaskNames = exampleTaskNames.filter(taskName => !(taskName in this.tasks));
 
-        return unusedTaskNames[Math.floor(Math.random() * unusedTaskNames.length)]
+        return unusedTaskNames[Math.floor(Math.random() * unusedTaskNames.length)];
 
     }
 

@@ -82,9 +82,9 @@ svg > *{
   padding: 5px calc(var(--main-padding) / 2);
 }
 
-/* .folder-menu .folders-list .folder-delete-icon {
-  margin-left: auto;
-} */
+.folder-menu .folders-list li > p {
+  pointer-events: none;
+}
 
 .folder-menu .folder-menu-header svg {
   margin-left: auto;
@@ -367,16 +367,19 @@ header > input:focus {
   flex-grow: 1;
 }
 
-.task-settings .sidebar-title .task-update-error-msg {
+.task-settings .sidebar-title .task-update-error-msg,
+.folder-menu .folder-deletion-error-msg {
   text-align: center;
   color: var(--priority-red);
   font-weight: 700;
+  font-size: 1rem;
   opacity: 0;
   height: 0px;
   transition: all 0.5s;
 }
 
-.task-settings .sidebar-title .task-update-error-msg.active {
+.task-settings .sidebar-title .task-update-error-msg.active,
+.folder-menu .folder-deletion-error-msg.active {
   height: 20px;
   opacity: 1;
 }
@@ -530,12 +533,14 @@ main {
 }
 
 .task .fa-trash-can,
+.folders-list li .folder-delete-icon,
 .task-settings .sidebar-title svg:last-child {
   transition: all 0.2s;
   margin-left: auto;
 }
 
-.task .fa-trash-can:hover {
+.task .fa-trash-can:hover,
+.folders-list li .folder-delete-icon:hover {
   color: var(--priority-red);
   transform: rotate(-10deg);
 }
