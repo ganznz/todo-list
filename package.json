@@ -24,6 +24,7 @@
     "webpack-cli": "^4.10.0"
   },
   "dependencies": {
-    "date-fns": "^2.29.3"
+    "date-fns": "^2.29.3",
+    "dragula": "^3.7.3"
   }
 }

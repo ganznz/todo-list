@@ -26,6 +26,7 @@
         <h1>FOLDERS</h1>
         <i class="fa-solid fa-angles-left fa-lg folders-menu-exit-btn"></i>
       </div>
+      <p class="folder-deletion-error-msg">You must have at least 1 folder!</p>
       <ul class="folders-list">
       </ul>
       <button type="button" class="add-folders btn add-btn">
@@ -33,20 +34,26 @@
       </button>
     </aside>
     <div class="sidebar-blur"></div>
-    <aside class="task-settings">
+    <aside class="task-settings" style="display: none">
       <section class="task-minor-info-section">
         <div class="sidebar-title">
-          <i class="fa-solid fa-angles-left fa-lg task-settings-exit-btn"></i>
-          <input type="text" value="Task #1">
+          <div class="sidebar-title-main">
+            <i class="fa-solid fa-angles-left fa-lg task-settings-exit-btn"></i>
+            <input type="text" value="Task #1">
+            <span class="task-settings-task-icon"></span>
+          </div>
+          <p class="task-update-error-msg">A task with this name already exists!</p>
+        </div>
+        <div class="task-icon-selection-container">
         </div>
         <div class="task-minor-container">
           <div class="task-status">
             <h4>Status:</h4>
-            <h5>In Progress</h5><i class="fa-solid fa-pen"></i>
+            <h5></h5><i class="fa-solid fa-pen"></i>
           </div>
           <div class="task-priority">
             <h4>Priority:</h4>
-            <h5>High</h5><i class="fa-solid fa-pen"></i>
+            <h5></h5><i class="fa-solid fa-pen"></i>
           </div>
           <div class="task-date-created">
             <h4>Date Created:</h4>

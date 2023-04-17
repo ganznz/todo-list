@@ -20,6 +20,12 @@
   font-family: sans-serif;
 }
 
+/* hide scrollbars */
+body *:not(.main-content-container) {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 .all-content {
   background-color: white;
   padding: var(--main-padding);
@@ -76,9 +82,9 @@ svg > *{
   padding: 5px calc(var(--main-padding) / 2);
 }
 
-/* .folder-menu .folders-list .folder-delete-icon {
-  margin-left: auto;
-} */
+.folder-menu .folders-list li > p {
+  pointer-events: none;
+}
 
 .folder-menu .folder-menu-header svg {
   margin-left: auto;
@@ -123,6 +129,10 @@ svg > *{
   margin: 0 calc(var(--main-padding) / 2);
 }
 
+.task-settings .task-main-info-section > div {
+  margin-bottom: 30px;
+}
+
 .task-settings.visible {
   right: 0px;
 }
@@ -133,12 +143,56 @@ svg > *{
 
 .task-settings .sidebar-title {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 20px;
+  margin-bottom: var(--task-settings-minor-info-section-margin);
+}
+
+.task-settings .sidebar-title .sidebar-title-main {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.task-settings .sidebar-title .task-minor-info-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-size: 1.4rem;
 }
 
+.task-settings .task-minor-info-section .task-icon-selection-container {
+  height: 0px;
+  background-color: rgb(240, 240, 240);
+  display: grid;
+  grid-template-columns: repeat(8, 50px);
+  grid-template-rows: repeat(8, 50px);
+  justify-content: space-around;
+  overflow: scroll;
+  transition: all 0.3s;
+}
+
+.task-settings .task-minor-info-section .task-icon-selection-container.active {
+  height: 200px;
+}
+
+.task-settings .task-minor-info-section .task-icon-selection-container > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.task-settings .task-minor-info-section .task-icon-selection-container > div > svg {
+  color: var(--grey);
+  pointer-events: none;
+}
+
+.task-settings .task-minor-info-section .task-icon-selection-container > div > svg.selected-task-icon {
+  color: var(--priority-green);
+}
+
 .task-settings .sidebar-title svg,
+.task-settings .sidebar-title,
 .folder-menu svg {
   font-size: 1.4rem;
   color: var(--grey);
@@ -244,6 +298,30 @@ header > input:focus {
   transition: all 0.2s;
 }
 
+.task-settings .task-status > h5.upcoming:before {
+  content: 'Upcoming';
+}
+
+.task-settings .task-status > h5.inprogress:before {
+  content: 'In Progress';
+}
+
+.task-settings .task-status > h5.completed:before {
+  content: 'Completed';
+}
+
+.task-settings .task-priority > h5.low:before {
+  content: 'Low';
+}
+
+.task-settings .task-priority > h5.medium:before {
+  content: 'Medium';
+}
+
+.task-settings .task-priority > h5.high:before {
+  content: 'High';
+}
+
 .task-settings .task-main-info-section h2 {
   font-weight: 400;
   margin-bottom: 10px;
@@ -281,20 +359,29 @@ header > input:focus {
   scale: 1.1;
 }
 
-.task-settings .sidebar-title {
-  margin-bottom: 50px;
-}
-
 .task-settings .sidebar-title input {
   border: none;
   padding: 5px;
   border-radius: 6px;
   transition: all 0.1s;
+  flex-grow: 1;
 }
 
-.task-settings .sidebar-title > svg:last-child {
+.task-settings .sidebar-title .task-update-error-msg,
+.folder-menu .folder-deletion-error-msg {
+  text-align: center;
   color: var(--priority-red);
-  margin-left: auto;
+  font-weight: 700;
+  font-size: 1rem;
+  opacity: 0;
+  height: 0px;
+  transition: all 0.5s;
+}
+
+.task-settings .sidebar-title .task-update-error-msg.active,
+.folder-menu .folder-deletion-error-msg.active {
+  height: 20px;
+  opacity: 1;
 }
 
 .task-settings .task-description textarea {
@@ -345,7 +432,6 @@ header > input:focus {
   background-color: #87dd7f;
   opacity: 0;
   display: none;
-  transition: all 1s;
 }
 
 .sidebar-blur.visible {
@@ -447,13 +533,14 @@ main {
 }
 
 .task .fa-trash-can,
-.task-settings .sidebar-title > svg:last-child {
+.folders-list li .folder-delete-icon,
+.task-settings .sidebar-title svg:last-child {
   transition: all 0.2s;
   margin-left: auto;
 }
 
 .task .fa-trash-can:hover,
-.task-settings .sidebar-title > svg:last-child:hover {
+.folders-list li .folder-delete-icon:hover {
   color: var(--priority-red);
   transform: rotate(-10deg);
 }
@@ -552,4 +639,27 @@ footer {
   text-align: center;
   color: var(--priority-orange);
   font-size: 0.8rem;
+}
+
+.gu-mirror {
+  position: fixed !important;
+  margin: 0 !important;
+  z-index: 9999 !important;
+  opacity: 0.8;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+  filter: alpha(opacity=80);
+}
+.gu-hide {
+  display: none !important;
+}
+.gu-unselectable {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+}
+.gu-transit {
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
 }
